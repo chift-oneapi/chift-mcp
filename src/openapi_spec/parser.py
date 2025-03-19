@@ -5,8 +5,8 @@ import re
 
 
 class OpenAPIParser:
-    def __init__(self, file_path: str | None = None):
-        self._file_path = file_path
+    def __init__(self) -> None:
+        self._file_path = None
         if not self._file_path:
             current_dir = os.path.dirname(os.path.abspath(__file__))
             self._file_path = os.path.join(current_dir, "schema", "openapi.json")
@@ -56,3 +56,5 @@ class OpenAPIParser:
         }
         return mapping.get(http_method.lower(), http_method)
 
+
+openapi_parser = OpenAPIParser()

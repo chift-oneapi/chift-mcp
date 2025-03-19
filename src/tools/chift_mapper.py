@@ -15,7 +15,12 @@ class ChiftMCPMapper:
         self._modules = modules
         self._methods = methods
         self._class_methods = {}
-        self.tools = []
+        self._tools = []
+
+    @property
+    def tools(self) -> list:
+        return self._tools
+
 
     @staticmethod
     def standard_methods(model_path: str | None = None):

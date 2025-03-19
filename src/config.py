@@ -6,6 +6,7 @@ class Chift(BaseSettings):
     client_secret: str
     client_id: str
     account_id: str
+    consumer_id: str
     url_base: str | None = "https://api.chift.eu"
 
 
@@ -13,3 +14,7 @@ class Chift(BaseSettings):
 
 class Config:
     chift = Chift()
+
+
+
+config:Config = Config()
