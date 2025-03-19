@@ -1,6 +1,9 @@
 from typing import Any
 
-from chift.openapi.models import Consumer
+from chift.openapi.models import (
+    Connection,
+    Consumer,
+)
 from mcp.server import FastMCP
 
 
@@ -87,3 +90,11 @@ def {tool_name}({", ".join(param_list)}):
 
         # Register with MCP
         mcp.tool()(tool_fn)
+
+
+def map_connections_to_modules(connections: list[Connection]) -> set[str]:
+    modules = []
+    for connection in connections:
+        if connection.api not in modules:
+            modules.append(f"chift.models.consumers.{connection.api.lower()}")
+    return set(modules)

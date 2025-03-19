@@ -67,7 +67,7 @@ class ChiftMCPMapper:
 
     def analyze_models(
         self,
-    ) -> None:
+    ) -> "ChiftMCPMapper":
         for module_name in self._modules:
             area = module_name.split(".")[-1]
             module = importlib.import_module(module_name)
@@ -156,8 +156,9 @@ class ChiftMCPMapper:
                         "chift_vertical": chift_vertical,
                         "chift_model": chift_model,
                     }
+        return self
 
-    def create_mcp_tools(self, ) -> None:
+    def create_mcp_tools(self) -> "ChiftMCPMapper":
         for full_class_name, info in self._class_methods.items():
             area, class_name = full_class_name.split(".")
             methods = info["methods"]
@@ -220,5 +221,6 @@ class ChiftMCPMapper:
                     "class_name": class_name,
                     "area": area,
                 }
-
                 self.tools.append(tool)
+
+        return self
