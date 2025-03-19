@@ -46,7 +46,7 @@ def register_mcp_tools(mcp: FastMCP, tools: list[dict], consumer: Consumer) -> N
             elif param_type == "dict":
                 param_annotations[param_name] = dict
             elif "list" in param_type.lower():
-                param_annotations[param_name] = List[Any]
+                param_annotations[param_name] = list[Any]
             elif "chift.openapi.models" in param_type:
                 # For model types we use Any for now
                 param_annotations[param_name] = Any
@@ -54,7 +54,11 @@ def register_mcp_tools(mcp: FastMCP, tools: list[dict], consumer: Consumer) -> N
                 param_annotations[param_name] = Any
 
         # Function creation
-        exec_globals = {"consumer": consumer, "List": List, "Any": Any}
+        exec_globals = {
+            "consumer": consumer,
+            "List": list,
+            "Any": Any
+        }
 
         fn_def = f"""
 def {tool_name}({", ".join(param_list)}):

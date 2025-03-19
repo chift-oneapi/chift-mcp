@@ -1,14 +1,52 @@
 import importlib
 import inspect
-from typing import Any
+
+from src.constants import CHIFT_METHOD_NAMES
 
 
 class ChiftMCPMapper:
-    def __init__(self, parsed_openapi: dict, )->None:
-        ...
+    def __init__(
+        self,
+        parsed_openapi: dict,
+        modules: list[str],
+        methods: set[str] | None = CHIFT_METHOD_NAMES
+    ) -> None:
+        self._openapi = parsed_openapi
+        self._modules = modules
+        self._methods = methods
+        self._class_methods = {}
+        self.tools = []
 
     @staticmethod
-    def _generate_docstring(method_name: str, model_name: str, api_description: str=None) -> str:
+    def standard_methods(model_path: str | None = None):
+        return {
+            "get": {
+                "params": ["chift_id:str"],
+                "return_type": model_path or "dict",
+            },
+            "create": {
+                "params": [f"data:{model_path}" if model_path else "data:dict"],
+                "return_type": model_path or "dict",
+            },
+            "update": {
+                "params": [
+                    "chift_id:str",
+                    f"data:{model_path}" if model_path else "data:dict",
+                ],
+                "return_type": model_path or "dict",
+            },
+            "delete": {
+                "params": ["chift_id:str"],
+                "return_type": "bool"
+            },
+            "all": {
+                "params": ["limit:int=None"],
+                "return_type": f"list[{model_path}]" if model_path else "list[dict]",
+            },
+        }
+
+    @staticmethod
+    def _generate_docstring(method_name: str, model_name: str, api_description: str | None = None) -> str:
         templates = {
             "get": f"Get {model_name} by ID.",
             "create": f"Create a new {model_name}.",
@@ -24,13 +62,8 @@ class ChiftMCPMapper:
 
     def analyze_models(
         self,
-        modules: list[str],
-        method_names: set[str],
-        endpoints_info:dict
-    ) -> dict[str, dict[str, Any]]:
-        class_methods = {}
-
-        for module_name in modules:
+    ) -> None:
+        for module_name in self._modules:
             area = module_name.split(".")[-1]
             module = importlib.import_module(module_name)
 
@@ -56,42 +89,24 @@ class ChiftMCPMapper:
                     methods = {}
 
                     # Standardized method signatures
-                    standard_methods = {
-                        "get": {
-                            "params": ["chift_id:str"],
-                            "return_type": model_path or "dict",
-                        },
-                        "create": {
-                            "params": [f"data:{model_path}" if model_path else "data:dict"],
-                            "return_type": model_path or "dict",
-                        },
-                        "update": {
-                            "params": [
-                                "chift_id:str",
-                                f"data:{model_path}" if model_path else "data:dict",
-                            ],
-                            "return_type": model_path or "dict",
-                        },
-                        "delete": {"params": ["chift_id:str"], "return_type": "bool"},
-                        "all": {
-                            "params": ["limit:int=None"],
-                            "return_type": f"list[{model_path}]" if model_path else "list[dict]",
-                        },
-                    }
+                    standard_methods = self.standard_methods(model_path=model_path)
 
                     # Process existing methods
                     for method_name, method_obj in inspect.getmembers(obj, inspect.isfunction):
-                        if method_name in method_names:
+                        if method_name in self._methods:
                             # Get existing docstring
                             existing_docstring = inspect.getdoc(method_obj) or ""
 
                             # Get API description if available
                             api_description = ""
-                            if chift_vertical and chift_model and chift_vertical in endpoints_info:
+                            if chift_vertical and chift_model and chift_vertical in self._openapi:
                                 model_key = chift_model.replace("_", "-")
-                                if (model_key in endpoints_info[chift_vertical] and
-                                    method_name in endpoints_info[chift_vertical][model_key]):
-                                    api_description = endpoints_info[chift_vertical][model_key][method_name].get("description", "")
+                                if (model_key in self._openapi[chift_vertical] and
+                                    method_name in self._openapi[chift_vertical][model_key]):
+                                    api_description = self._openapi[chift_vertical][model_key][method_name].get(
+                                        "description",
+                                        ""
+                                        )
 
                             # Generate docstring
                             docstring = existing_docstring
@@ -108,15 +123,18 @@ class ChiftMCPMapper:
                             }
 
                     # Fill in standard methods if not present
-                    for method_name in method_names:
+                    for method_name in self._methods:
                         if method_name not in methods:
                             # Get API description if available
                             api_desc = ""
-                            if chift_vertical and chift_model and chift_vertical in endpoints_info:
+                            if chift_vertical and chift_model and chift_vertical in self._openapi:
                                 model_key = chift_model.replace("_", "-")
-                                if (model_key in endpoints_info[chift_vertical] and
-                                    method_name in endpoints_info[chift_vertical][model_key]):
-                                    api_desc = endpoints_info[chift_vertical][model_key][method_name].get("description", "")
+                                if (model_key in self._openapi[chift_vertical] and
+                                    method_name in self._openapi[chift_vertical][model_key]):
+                                    api_desc = self._openapi[chift_vertical][model_key][method_name].get(
+                                        "description",
+                                        ""
+                                        )
 
                             # Create standard method entry
                             methods[method_name] = {
@@ -126,7 +144,7 @@ class ChiftMCPMapper:
                             }
 
                     # Add class info
-                    class_methods[f"{area}.{name}"] = {
+                    self._class_methods[f"{area}.{name}"] = {
                         "methods": methods,
                         "model": model_path,
                         "model_fields": model_fields,
@@ -134,13 +152,8 @@ class ChiftMCPMapper:
                         "chift_model": chift_model,
                     }
 
-        return class_methods
-
-
-    def create_mcp_tools(self, class_info: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
-        tools = []
-
-        for full_class_name, info in class_info.items():
+    def create_mcp_tools(self, ) -> None:
+        for full_class_name, info in self._class_methods.items():
             area, class_name = full_class_name.split(".")
             methods = info["methods"]
 
@@ -203,6 +216,4 @@ class ChiftMCPMapper:
                     "area": area,
                 }
 
-                tools.append(tool)
-
-        return tools
+                self.tools.append(tool)
