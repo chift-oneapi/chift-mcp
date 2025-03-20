@@ -28,4 +28,4 @@ register_mcp_tools(mcp=mcp, tools=tool_mapper.tools, consumer=consumer)
 
 
 def run()->None:
-    ...
+    mcp.run()
