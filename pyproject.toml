@@ -5,10 +5,11 @@ description = "MCP Server to intercat with Chift API via Chift Python SDK"
 readme = "README.md"
 requires-python = ">=3.11,<4"
 dependencies = [
-    "mcp>=1.4.1",
+    "mcp[cli]>=1.4.1",
     "chift @ git+https://github.com/chift-oneapi/chift-python-sdk.git@dima/pydatic-v2-migration",
     "pydantic-config>=0.3.0",
     "loguru>=0.7.3",
+    "inflect>=7.5.0",
 ]
 
 

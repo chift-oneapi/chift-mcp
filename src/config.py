@@ -1,4 +1,9 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    SettingsConfigDict,
+)
+
+from src.constants import DEFAULT_CONFIG
 
 
 class Chift(BaseSettings):
@@ -7,6 +12,7 @@ class Chift(BaseSettings):
     client_id: str
     account_id: str
     consumer_id: str
+    function_config: dict | None = DEFAULT_CONFIG
     url_base: str | None = "https://api.chift.eu"
 
 

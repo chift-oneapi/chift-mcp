@@ -1,5 +1,7 @@
-from src.__main__ import run
-
+from src.__main__ import (
+    mcp, # noqa
+    run,
+)
 
 if __name__ == "__main__":
     run()

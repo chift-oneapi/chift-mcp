@@ -1,0 +1,1985 @@
+from typing import Optional
+
+import chift
+from chift.openapi.openapi import (
+    AccountBalanceFilter,
+    AnalyticAccountItemIn,
+    AnalyticAccountItemOutMultiAnalyticPlans,
+    AnalyticAccountItemUpdate,
+    AttachmentItem,
+    BoolParam,
+    ChiftPageAccountBalance,
+    ChiftPageAccountItem,
+    ChiftPageAccountingCategoryItem,
+    ChiftPageAccountingVatCode,
+    ChiftPageAnalyticAccountItemOutMultiAnalyticPlans,
+    ChiftPageAnalyticPlanItem,
+    ChiftPageAttachmentItemOut,
+    ChiftPageBalanceItemOut,
+    ChiftPageBookYear,
+    ChiftPageCategoryItem,
+    ChiftPageClientItemOut,
+    ChiftPageCommerceCustomerItem,
+    ChiftPageCommerceLocationItemOut,
+    ChiftPageContactItemOut,
+    ChiftPageCountryItem,
+    ChiftPageEmployeeItem,
+    ChiftPageInvoicingPaymentItem,
+    ChiftPageInvoicingPaymentMethodItem,
+    ChiftPageInvoicingVatCode,
+    ChiftPageJournal,
+    ChiftPageJournalEntryMultiAnalyticPlan,
+    ChiftPageMiscellaneousOperationOut,
+    ChiftPageOpportunityItem,
+    ChiftPageOrderItemOut,
+    ChiftPageOutstandingItem,
+    ChiftPagePMSAccountingCategoryItem,
+    ChiftPagePMSCustomerItem,
+    ChiftPagePMSInvoiceFullItem,
+    ChiftPagePMSLocationItem,
+    ChiftPagePMSOrderItem,
+    ChiftPagePMSPaymentItem,
+    ChiftPagePMSPaymentMethods,
+    ChiftPagePOSCustomerItem,
+    ChiftPagePOSLocationItem,
+    ChiftPagePOSOrderItem,
+    ChiftPagePOSPaymentItem,
+    ChiftPagePOSProductItem,
+    ChiftPagePayment,
+    ChiftPagePaymentItemOut,
+    ChiftPagePaymentMethodItem,
+    ChiftPagePaymentMethods,
+    ChiftPageProductItemOut,
+    ChiftPageRefundItemOut,
+    ChiftPageSupplierItemOut,
+    ChiftPageTaxRateItem,
+    ChiftPageTransactionItemOut,
+    ClientItemIn,
+    ClientItemOut,
+    ClientItemUpdate,
+    ClosureItem,
+    CommerceCustomerItem,
+    ContactItemIn,
+    ContactItemOut,
+    ContactType,
+    FinancialEntryItemIn,
+    FinancialEntryItemInOld,
+    FinancialEntryItemOut,
+    FinancialEntryItemOutOld,
+    GenericJournalEntry,
+    InventoryDetailsItem,
+    InventoryDetailsUpdate,
+    InvoiceItemOutMultiAnalyticPlans,
+    InvoiceItemOutSingle,
+    InvoicingVatCode,
+    JournalEntryMultiAnalyticPlan,
+    MatchingIn,
+    MatchingOut,
+    MiscellaneousOperationIn,
+    MiscellaneousOperationOut,
+    MultipleMatchingIn,
+    OpportunityItem,
+    OrderItemIn,
+    OrderItemOut,
+    PMSClosureItem,
+    PMSCustomerItem,
+    PMSStates,
+    POSCreateCustomerItem,
+    POSCustomerItem,
+    POSOrderItem,
+    PaymentItemOut,
+    ProductItemOut,
+    SalesItem,
+    States,
+    SupplierItemIn,
+    SupplierItemOut,
+    SupplierItemUpdate,
+    TransactionAccountingCategory,
+    UpdateOrderItem,
+    VariantItem,
+)
+
+
+def accounting_get_folders(consumer_id: str) -> list:
+    """Get Folders
+
+    Args:
+        consumer_id (str): The consumer ID
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Folder.all()
+
+
+def accounting_get_bookyears(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageBookYear:
+    """Get Bookyears
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Bookyear.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_analytic_plans(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageAnalyticPlanItem:
+    """Get Analytic Plans
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Analytic_plan.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_client(
+    consumer_id: str,
+    data: ClientItemIn,
+    folder_id: Optional[str] = None,
+    force_merge: Optional[str] = None
+) -> ClientItemOut:
+    """Create a new client
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (ClientItemIn): The request data
+        folder_id (str): 
+        force_merge (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Client.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "force_merge": force_merge
+        }
+    )
+
+
+def accounting_get_clients(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None,
+    search: Optional[str] = None,
+    updated_after: Optional[str] = None
+) -> ChiftPageClientItemOut:
+    """Returns a list of accounting clients
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        search (str): 
+        updated_after (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Client.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "search": search,
+            "updated_after": updated_after
+        }
+    )
+
+
+def accounting_update_client(
+    consumer_id: str,
+    client_id: str,
+    data: ClientItemUpdate,
+    folder_id: Optional[str] = None
+) -> ClientItemOut:
+    """Endpoint that gives the possibility to update an accounting client
+
+    Args:
+        consumer_id (str): The consumer ID
+        client_id (str): 
+        data (ClientItemUpdate): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Client.update(
+        client_id,
+        data=data,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_client(consumer_id: str, client_id: str, folder_id: Optional[str] = None) -> ClientItemOut:
+    """Returns a specific accounting client
+
+    Args:
+        consumer_id (str): The consumer ID
+        client_id (str): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Client.get(
+        client_id,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_supplier(
+    consumer_id: str,
+    data: SupplierItemIn,
+    folder_id: Optional[str] = None,
+    force_merge: Optional[str] = None
+) -> SupplierItemOut:
+    """Create a new supplier
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (SupplierItemIn): The request data
+        folder_id (str): 
+        force_merge (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Supplier.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "force_merge": force_merge
+        }
+    )
+
+
+def accounting_get_suppliers(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None,
+    search: Optional[str] = None,
+    updated_after: Optional[str] = None
+) -> ChiftPageSupplierItemOut:
+    """Returns a list of accounting suppliers
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        search (str): 
+        updated_after (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Supplier.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "search": search,
+            "updated_after": updated_after
+        }
+    )
+
+
+def accounting_get_supplier(consumer_id: str, supplier_id: str, folder_id: Optional[str] = None) -> SupplierItemOut:
+    """Returns one accounting supplier
+
+    Args:
+        consumer_id (str): The consumer ID
+        supplier_id (str): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Supplier.get(
+        supplier_id,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_update_supplier(
+    consumer_id: str,
+    supplier_id: str,
+    data: SupplierItemUpdate,
+    folder_id: Optional[str] = None
+) -> SupplierItemOut:
+    """Update an accounting supplier
+
+    Args:
+        consumer_id (str): The consumer ID
+        supplier_id (str): 
+        data (SupplierItemUpdate): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Supplier.update(
+        supplier_id,
+        data=data,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_add_attachment(
+    consumer_id: str,
+    invoice_id: str,
+    data: AttachmentItem,
+    folder_id: Optional[str] = None,
+    overwrite_existing: Optional[BoolParam] = "false"
+) -> bool:
+    """Attach a document (PDF) to the invoice entry
+
+    Args:
+        consumer_id (str): The consumer ID
+        invoice_id (str): 
+        data (AttachmentItem): The request data
+        folder_id (str): 
+        overwrite_existing (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Invoice.create(
+        data=data,
+        invoice_id=invoice_id,
+        params={
+            "folder_id": folder_id,
+            "overwrite_existing": overwrite_existing
+        }
+    )
+
+
+def accounting_get_invoice_multi_analytic_plans(
+    consumer_id: str,
+    invoice_id: str,
+    folder_id: Optional[str] = None,
+    include_payments: Optional[BoolParam] = "false"
+) -> InvoiceItemOutMultiAnalyticPlans:
+    """Returns a specific invoice (=sale/purchase entry) with invoice lines /oincluding multiple analytic plans
+
+    Args:
+        consumer_id (str): The consumer ID
+        invoice_id (str): 
+        folder_id (str): 
+        include_payments (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Invoice.get(
+        invoice_id,
+        params={
+            "folder_id": folder_id,
+            "include_payments": include_payments
+        }
+    )
+
+
+def accounting_get_payments_by_invoice(
+    consumer_id: str,
+    invoice_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPagePayment:
+    """Get payments of a specific invoice based on its ID
+
+    Args:
+        consumer_id (str): The consumer ID
+        invoice_id (str): 
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Invoice.all(
+        invoice_id=invoice_id,
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_analytic_account_multi_plans(
+    consumer_id: str,
+    analytic_plan: str,
+    data: AnalyticAccountItemIn,
+    folder_id: Optional[str] = None
+) -> AnalyticAccountItemOutMultiAnalyticPlans:
+    """Create a new analytic account in a specific analytic plan
+
+    Args:
+        consumer_id (str): The consumer ID
+        analytic_plan (str): 
+        data (AnalyticAccountItemIn): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Analytic_account.create(
+        data=data,
+        analytic_plan=analytic_plan,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_analytic_accounts_multi_plans(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageAnalyticAccountItemOutMultiAnalyticPlans:
+    """Returns all analytic accounts of all analytic plans
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Analytic_account.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_update_analytic_account_multi_plans(
+    consumer_id: str,
+    analytic_account_id: str,
+    analytic_plan: str,
+    data: AnalyticAccountItemUpdate,
+    folder_id: Optional[str] = None
+) -> AnalyticAccountItemOutMultiAnalyticPlans:
+    """Update one specific analytic account in a specific analytic plan
+
+    Args:
+        consumer_id (str): The consumer ID
+        analytic_account_id (str): 
+        analytic_plan (str): 
+        data (AnalyticAccountItemUpdate): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Analytic_account.update(
+        analytic_account_id,
+        data=data,
+        analytic_plan=analytic_plan,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_analytic_account_multi_plans(
+    consumer_id: str,
+    analytic_account_id: str,
+    analytic_plan: str,
+    folder_id: Optional[str] = None
+) -> AnalyticAccountItemOutMultiAnalyticPlans:
+    """Returns one specific analytic account of a specific analytic plan
+
+    Args:
+        consumer_id (str): The consumer ID
+        analytic_account_id (str): 
+        analytic_plan (str): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Analytic_account.get(
+        analytic_account_id,
+        analytic_plan=analytic_plan,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_journal_entries_multi_plan(
+    consumer_id: str,
+    unposted_allowed: str,
+    journal_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    updated_after: Optional[str] = None,
+    partner_id: Optional[str] = None
+) -> ChiftPageJournalEntryMultiAnalyticPlan:
+    """Returns a list of journal entries with invoice items including multiple analytic plan.Optionally,
+    you can retrieve journal entries linked to a specific client/supplier using the partner_id parameter. When
+    retrieving entries linked to a specific client/supplier, some journal items of an entry (e.g. a miscellaneous
+    operation) could be excluding resulting in an unbalanced journal entry.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        unposted_allowed (str): 
+        journal_id (str): 
+        date_from (str): 
+        date_to (str): 
+        updated_after (str): 
+        partner_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Journal.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "unposted_allowed": unposted_allowed,
+            "journal_id": journal_id,
+            "date_from": date_from,
+            "date_to": date_to,
+            "updated_after": updated_after,
+            "partner_id": partner_id
+        }
+    )
+
+
+def accounting_get_journal_entry(
+    consumer_id: str,
+    journal_entry_id: str,
+    folder_id: Optional[str] = None
+) -> JournalEntryMultiAnalyticPlan:
+    """Returns a single journal entry by ID.
+
+    Args:
+        consumer_id (str): The consumer ID
+        journal_entry_id (str): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Journal.get(
+        journal_entry_id,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_generic_journal_entry(
+    consumer_id: str,
+    data: GenericJournalEntry,
+    folder_id: Optional[str] = None,
+    force_currency_exchange: Optional[BoolParam] = "false"
+) -> JournalEntryMultiAnalyticPlan:
+    """Create a new Journal Entry in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (GenericJournalEntry): The request data
+        folder_id (str): 
+        force_currency_exchange (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Journal_entry.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "force_currency_exchange": force_currency_exchange
+        }
+    )
+
+
+def accounting_get_journals(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageJournal:
+    """Get journals existing in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Journal.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_vat_codes(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageAccountingVatCode:
+    """Get vat codes existing in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Vat_code.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_miscellaneous_operation(
+    consumer_id: str,
+    data: MiscellaneousOperationIn,
+    folder_id: Optional[str] = None
+) -> MiscellaneousOperationOut:
+    """Create a new miscellaneous operation
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (MiscellaneousOperationIn): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Miscellaneous_operation.create(
+        data=data,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_miscellaneous_operations(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    journal_ids: Optional[str] = None
+) -> ChiftPageMiscellaneousOperationOut:
+    """Get miscellaneous operations from the the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        date_from (str): 
+        date_to (str): 
+        journal_ids (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Miscellaneous_operation.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "date_from": date_from,
+            "date_to": date_to,
+            "journal_ids": journal_ids
+        }
+    )
+
+
+def accounting_get_miscellaneous_operation(
+    consumer_id: str,
+    operation_id: str,
+    folder_id: Optional[str] = None
+) -> MiscellaneousOperationOut:
+    """Get a specific miscellaneous operation from the the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        operation_id (str): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Miscellaneous_operation.get(
+        operation_id,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_match_entries(consumer_id: str, data: MatchingIn, folder_id: Optional[str] = None) -> MatchingOut:
+    """Match existing entries in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (MatchingIn): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Matching.create(
+        data=data,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_match_entries_multiple(
+    consumer_id: str,
+    data: MultipleMatchingIn,
+    folder_id: Optional[str] = None
+) -> list:
+    """Match existing entries in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (MultipleMatchingIn): The request data
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Matching_multiple.create(
+        data=data,
+        params={
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_attachments(
+    consumer_id: str,
+    type: str,
+    document_id: str,
+    folder_id: Optional[str] = None,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageAttachmentItemOut:
+    """Returns a list of all attachments linked to an accounting entry
+
+    Args:
+        consumer_id (str): The consumer ID
+        folder_id (str): 
+        type (str): 
+        document_id (str): 
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Attachment.all(
+        params={
+            "folder_id": folder_id,
+            "type": type,
+            "document_id": document_id,
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def accounting_get_chart_of_accounts(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None,
+    classes: Optional[str] = None
+) -> ChiftPageAccountItem:
+    """Get all accounts in the chart of accounts
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        classes (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Chart_of_account.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "classes": classes
+        }
+    )
+
+
+def accounting_get_accounts_balances(
+    consumer_id: str,
+    data: AccountBalanceFilter,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageAccountBalance:
+    """Get the balance of accounts in the accounting plan (chart of accounts) between specific months
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (AccountBalanceFilter): The request data
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Chart_of_account.create(
+        data=data,
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_get_employees(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageEmployeeItem:
+    """Returns a list of the employees linked to the company
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Employee.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id
+        }
+    )
+
+
+def accounting_create_financial_entry(
+    consumer_id: str,
+    data: FinancialEntryItemInOld,
+    folder_id: Optional[str] = None,
+    financial_counterpart_account: Optional[str] = None
+) -> FinancialEntryItemOutOld:
+    """Create a new financial entry (Bank or Cash operation)
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (FinancialEntryItemInOld): The request data
+        folder_id (str): 
+        financial_counterpart_account (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Financial_entry.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "financial_counterpart_account": financial_counterpart_account
+        }
+    )
+
+
+def accounting_create_financial_entries(
+    consumer_id: str,
+    data: FinancialEntryItemIn,
+    folder_id: Optional[str] = None,
+    financial_counterpart_account: Optional[str] = None
+) -> FinancialEntryItemOut:
+    """Create a new financial entry (Bank or Cash operation)
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (FinancialEntryItemIn): The request data
+        folder_id (str): 
+        financial_counterpart_account (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Financial_entry.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "financial_counterpart_account": financial_counterpart_account
+        }
+    )
+
+
+def accounting_get_outstandings(
+    consumer_id: str,
+    type: str,
+    unposted_allowed: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    folder_id: Optional[str] = None
+) -> ChiftPageOutstandingItem:
+    """Returns a list of all clients/suppliers outstanding items
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        folder_id (str): 
+        type (str): 
+        unposted_allowed (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Outstanding.all(
+        params={
+            "page": page,
+            "size": size,
+            "folder_id": folder_id,
+            "type": type,
+            "unposted_allowed": unposted_allowed
+        }
+    )
+
+
+def pos_get_orders(
+    consumer_id: str,
+    date_from: str,
+    date_to: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None,
+    state: Optional[States] = "all"
+) -> ChiftPagePOSOrderItem:
+    """Returns a list of the orders
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+        location_id (str): 
+        state (States): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Order.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to,
+            "location_id": location_id,
+            "state": state
+        }
+    )
+
+
+def pos_get_order(consumer_id: str, order_id: str) -> POSOrderItem:
+    """Returns a single order
+
+    Args:
+        consumer_id (str): The consumer ID
+        order_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Order.get(order_id)
+
+
+def pos_update_pos_customer(consumer_id: str, order_id: str, data: UpdateOrderItem) -> POSOrderItem:
+    """Update one order
+
+    Args:
+        consumer_id (str): The consumer ID
+        order_id (str): 
+        data (UpdateOrderItem): The request data
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Order.update(order_id, data=data)
+
+
+def pos_get_locations(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPagePOSLocationItem:
+    """Returns a list of the locations
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Location.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def pos_get_payments(
+    consumer_id: str,
+    date_from: str,
+    date_to: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPagePOSPaymentItem:
+    """Returns a list of payments
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Payment.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def pos_get_sales(consumer_id: str, date_from: str, date_to: str, location_id: Optional[str] = None) -> SalesItem:
+    """Returns the summary of the sales
+
+    Args:
+        consumer_id (str): The consumer ID
+        date_from (str): 
+        date_to (str): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Sale.all(
+        params={
+            "date_from": date_from,
+            "date_to": date_to,
+            "location_id": location_id
+        }
+    )
+
+
+def pos_get_payments_methods(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None
+) -> ChiftPagePaymentMethods:
+    """Returns the list of payment methods
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Payment_method.all(
+        params={
+            "page": page,
+            "size": size,
+            "location_id": location_id
+        }
+    )
+
+
+def pos_get_customers(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    search: Optional[str] = None,
+    email: Optional[str] = None,
+    phone: Optional[str] = None
+) -> ChiftPagePOSCustomerItem:
+    """Returns the list of customers
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        search (str): 
+        email (str): 
+        phone (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Customer.all(
+        params={
+            "page": page,
+            "size": size,
+            "search": search,
+            "email": email,
+            "phone": phone
+        }
+    )
+
+
+def pos_create_pos_customer(consumer_id: str, data: POSCreateCustomerItem) -> POSCustomerItem:
+    """Create a customer
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (POSCreateCustomerItem): The request data
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Customer.create(data=data)
+
+
+def pos_get_customer(consumer_id: str, customer_id: str) -> POSCustomerItem:
+    """Returns a specific customer
+
+    Args:
+        consumer_id (str): The consumer ID
+        customer_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Customer.get(customer_id)
+
+
+def pos_get_products(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None
+) -> ChiftPagePOSProductItem:
+    """Returns a list of products
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Product.all(
+        params={
+            "page": page,
+            "size": size,
+            "location_id": location_id
+        }
+    )
+
+
+def pos_get_accounting_categories(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None
+) -> ChiftPageAccountingCategoryItem:
+    """Returns a list of accounting categories. When not available for a specific POS, it will return the same values
+    as the product categories.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Accounting_category.all(
+        params={
+            "page": page,
+            "size": size,
+            "location_id": location_id
+        }
+    )
+
+
+def pos_get_closure(consumer_id: str, date: str, location_id: Optional[str] = None) -> ClosureItem:
+    """Returns whether the closure was already done for a specific day or not
+
+    Args:
+        consumer_id (str): The consumer ID
+        date (str): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pos.Closure.get(
+        date=date,
+        params={
+            "location_id": location_id
+        }
+    )
+
+
+def ecommerce_get_customers(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageCommerceCustomerItem:
+    """Returns a list of all the customers
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Customer.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def ecommerce_get_customer(consumer_id: str, customer_id: str) -> CommerceCustomerItem:
+    """Returns a specific customer
+
+    Args:
+        consumer_id (str): The consumer ID
+        customer_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Customer.get(customer_id)
+
+
+def ecommerce_get_variant(consumer_id: str, variant_id: str) -> VariantItem:
+    """Returns a specific product variant
+
+    Args:
+        consumer_id (str): The consumer ID
+        variant_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Variant.get(variant_id)
+
+
+def ecommerce_update_variant_quantity(
+    consumer_id: str,
+    variant_id: str,
+    data: InventoryDetailsUpdate
+) -> InventoryDetailsItem:
+    """Update available quantity of a product variant in a specific location
+
+    Args:
+        consumer_id (str): The consumer ID
+        variant_id (str): 
+        data (InventoryDetailsUpdate): The request data
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Variant.create(data=data, variant_id=variant_id)
+
+
+def ecommerce_get_locations(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageCommerceLocationItemOut:
+    """Returns a list of all locations
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Location.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def ecommerce_get_orders(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    updated_after: Optional[str] = None,
+    include_detailed_refunds: Optional[BoolParam] = "false",
+    include_product_categories: Optional[BoolParam] = "false",
+    include_customer_details: Optional[BoolParam] = "true"
+) -> ChiftPageOrderItemOut:
+    """Returns a list of all the orders
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+        updated_after (str): 
+        include_detailed_refunds (BoolParam): 
+        include_product_categories (BoolParam): 
+        include_customer_details (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Order.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to,
+            "updated_after": updated_after,
+            "include_detailed_refunds": include_detailed_refunds,
+            "include_product_categories": include_product_categories,
+            "include_customer_details": include_customer_details
+        }
+    )
+
+
+def ecommerce_create_order(consumer_id: str, data: OrderItemIn) -> OrderItemOut:
+    """Create a new order
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (OrderItemIn): The request data
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Order.create(data=data)
+
+
+def ecommerce_get_order(
+    consumer_id: str,
+    order_id: str,
+    include_product_categories: Optional[BoolParam] = "false"
+) -> OrderItemOut:
+    """Returns a specific order
+
+    Args:
+        consumer_id (str): The consumer ID
+        order_id (str): 
+        include_product_categories (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Order.get(
+        order_id,
+        params={
+            "include_product_categories": include_product_categories
+        }
+    )
+
+
+def ecommerce_get_payments_methods(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPagePaymentMethodItem:
+    """Returns the list of the payment methods
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Payment_method.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def ecommerce_get_product_categories(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    only_parents: Optional[BoolParam] = "false"
+) -> ChiftPageCategoryItem:
+    """Returns the list of the product categories
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        only_parents (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Product_category.all(
+        params={
+            "page": page,
+            "size": size,
+            "only_parents": only_parents
+        }
+    )
+
+
+def ecommerce_get_taxes(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPageTaxRateItem:
+    """Returns the list of all tax rates
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Tax.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def ecommerce_get_countries(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPageCountryItem:
+    """Returns the list of all activated countries
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.commerce.Country.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def invoicing_get_invoice(
+    consumer_id: str,
+    invoice_id: str,
+    include_pdf: Optional[BoolParam] = "false"
+) -> InvoiceItemOutSingle:
+    """Returns a invoice
+
+    Args:
+        consumer_id (str): The consumer ID
+        invoice_id (str): 
+        include_pdf (BoolParam): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Invoice.get(
+        invoice_id,
+        params={
+            "include_pdf": include_pdf
+        }
+    )
+
+
+def invoicing_get_taxes(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageInvoicingVatCode:
+    """Returns a list of all the taxes
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Tax.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def invoicing_get_tax(consumer_id: str, tax_id: str) -> InvoicingVatCode:
+    """Returns a tax
+
+    Args:
+        consumer_id (str): The consumer ID
+        tax_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Tax.get(tax_id)
+
+
+def invoicing_get_products(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageProductItemOut:
+    """Returns a list of all the products
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Product.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def invoicing_get_product(consumer_id: str, product_id: str) -> ProductItemOut:
+    """Returns a product
+
+    Args:
+        consumer_id (str): The consumer ID
+        product_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Product.get(product_id)
+
+
+def invoicing_get_opportunities(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageOpportunityItem:
+    """Returns a list of all the opportunities
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Opportunity.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def invoicing_get_opportunity(consumer_id: str, opportunity_id: str) -> OpportunityItem:
+    """Returns an opportunity
+
+    Args:
+        consumer_id (str): The consumer ID
+        opportunity_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Opportunity.get(opportunity_id)
+
+
+def invoicing_get_contacts(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    contact_type: Optional[ContactType] = "all"
+) -> ChiftPageContactItemOut:
+    """Returns a list of all the contacts. Optionally contact type can be defined to retrieve contact from a certain
+    type.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        contact_type (ContactType): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Contact.all(
+        params={
+            "page": page,
+            "size": size,
+            "contact_type": contact_type
+        }
+    )
+
+
+def invoicing_post_contacts(consumer_id: str, data: ContactItemIn) -> ContactItemOut:
+    """Create a new contact.
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (ContactItemIn): The request data
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Contact.create(data=data)
+
+
+def invoicing_get_contact(consumer_id: str, contact_id: str) -> ContactItemOut:
+    """Returns a contact
+
+    Args:
+        consumer_id (str): The consumer ID
+        contact_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Contact.get(contact_id)
+
+
+def invoicing_get_payments(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+) -> ChiftPageInvoicingPaymentItem:
+    """Returns a list of payments
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Payment.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def invoicing_get_payments_methods(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPageInvoicingPaymentMethodItem:
+    """Returns the list of payment methods
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.invoicing.Payment_method.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def payment_get_balances(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPageBalanceItemOut:
+    """Returns a list of balances.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.payment.Balance.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def payment_get_transaction(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    accounting_category: Optional[TransactionAccountingCategory] = "all",
+    starting_from: Optional[str] = None,
+    balance_id: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+) -> ChiftPageTransactionItemOut:
+    """Returns a list of transactions. Optionally transaction type and dates can be defined to retrieve transactions
+    of a certain type from a certain date to another date
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        accounting_category (TransactionAccountingCategory): 
+        starting_from (str): 
+        balance_id (str): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.payment.Transaction.all(
+        params={
+            "page": page,
+            "size": size,
+            "accounting_category": accounting_category,
+            "starting_from": starting_from,
+            "balance_id": balance_id,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def payment_get_payments(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+) -> ChiftPagePaymentItemOut:
+    """Returns a list of payments.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.payment.Payment.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def payment_get_payment(consumer_id: str, payment_id: str) -> PaymentItemOut:
+    """Returns a specific payment.
+
+    Args:
+        consumer_id (str): The consumer ID
+        payment_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.payment.Payment.get(payment_id)
+
+
+def payment_get_refunds(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    payment_id: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None
+) -> ChiftPageRefundItemOut:
+    """Returns a list of refunds.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        payment_id (str): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.payment.Refund.all(
+        params={
+            "page": page,
+            "size": size,
+            "payment_id": payment_id,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def pms_get_orders(
+    consumer_id: str,
+    date_from: str,
+    date_to: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None,
+    state: Optional[PMSStates] = "consumed"
+) -> ChiftPagePMSOrderItem:
+    """Returns a list of the orders
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+        location_id (str): 
+        state (PMSStates): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Order.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to,
+            "location_id": location_id,
+            "state": state
+        }
+    )
+
+
+def pms_get_invoices(
+    consumer_id: str,
+    date_from: str,
+    date_to: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None
+) -> ChiftPagePMSInvoiceFullItem:
+    """Returns a list of the invoices
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Invoice.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to,
+            "location_id": location_id
+        }
+    )
+
+
+def pms_get_customers(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPagePMSCustomerItem:
+    """Returns a list of all the customers
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Customer.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def pms_get_customer(consumer_id: str, customer_id: str) -> PMSCustomerItem:
+    """Returns a specific customer
+
+    Args:
+        consumer_id (str): The consumer ID
+        customer_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Customer.get(customer_id)
+
+
+def pms_get_locations(consumer_id: str, page: Optional[int] = 1, size: Optional[int] = 50) -> ChiftPagePMSLocationItem:
+    """Returns a list of the locations
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Location.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def pms_get_payments(
+    consumer_id: str,
+    date_from: str,
+    date_to: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPagePMSPaymentItem:
+    """Returns a list of payments
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        date_from (str): 
+        date_to (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Payment.all(
+        params={
+            "page": page,
+            "size": size,
+            "date_from": date_from,
+            "date_to": date_to
+        }
+    )
+
+
+def pms_get_payments_methods(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50,
+    location_id: Optional[str] = None
+) -> ChiftPagePMSPaymentMethods:
+    """Returns the list of payment methods
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Payment_method.all(
+        params={
+            "page": page,
+            "size": size,
+            "location_id": location_id
+        }
+    )
+
+
+def pms_get_accounting_categories(
+    consumer_id: str,
+    page: Optional[int] = 1,
+    size: Optional[int] = 50
+) -> ChiftPagePMSAccountingCategoryItem:
+    """Returns a list of accounting categories. When not available for a specific PMS,it will return the same values
+    as the product categories.
+
+    Args:
+        consumer_id (str): The consumer ID
+        page (int): 
+        size (int): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Accounting_category.all(
+        params={
+            "page": page,
+            "size": size
+        }
+    )
+
+
+def pms_get_closure(consumer_id: str, date: str, location_id: Optional[str] = None) -> PMSClosureItem:
+    """Returns whether the closure was already done for a specific day or not
+
+    Args:
+        consumer_id (str): The consumer ID
+        date (str): 
+        location_id (str): 
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.pms.Closure.get(
+        date=date,
+        params={
+            "location_id": location_id
+        }
+    )
