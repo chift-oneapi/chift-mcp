@@ -57,11 +57,7 @@ def register_mcp_tools(mcp: FastMCP, tools: list[dict], consumer: Consumer) -> N
                 param_annotations[param_name] = Any
 
         # Function creation
-        exec_globals = {
-            "consumer": consumer,
-            "List": list,
-            "Any": Any
-        }
+        exec_globals = {"consumer": consumer, "List": list, "Any": Any}
 
         fn_def = f"""
 def {tool_name}({", ".join(param_list)}):

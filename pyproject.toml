@@ -1,17 +1,72 @@
 [project]
 name = "chift-mcp-server"
 version = "0.1.0"
-description = "MCP Server to intercat with Chift API via Chift Python SDK"
+description = "MCP Server to interact with Chift API via Chift Python SDK"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.11,<4.0"
 readme = "README.md"
-requires-python = ">=3.11,<4"
+license = "MIT"
 dependencies = [
     "mcp[cli]>=1.4.1",
-    "chift @ git+https://github.com/chift-oneapi/chift-python-sdk.git@dima/pydatic-v2-migration",
+    "chift>=0.1.90",
     "pydantic-config>=0.3.0",
     "loguru>=0.7.3",
     "inflect>=7.5.0",
+    "pydantic>=2.7.2"
 ]
 
+[project.scripts]
+chift-mcp-server = "chift_mcp.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff>=0.3.4",
+    "poethepoet>=0.24.0"
+]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/chift_mcp"]
+
+[tool.hatch.build.targets.wheel]
+include = ["src/chift_mcp"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src/chift_mcp" = "chift_mcp"
+
+[tool.poe.tasks]
+lint = "ruff check . --show-fixes --fix"
+format = "ruff format ."
+test = "pytest tests"
+install = "uv sync"
 
 
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+indent-width = 4
 
+[tool.ruff.lint]
+select = ["E", "F", "B", "I", "UP", "SIM", "C4", "TID", "RUF"]
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["B018", "T201"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["chift_mcp"]
+combine-as-imports = true
+force-single-line = false
+lines-between-types = 1
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+docstring-code-format = false
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

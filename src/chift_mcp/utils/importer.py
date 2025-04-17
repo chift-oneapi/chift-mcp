@@ -5,7 +5,7 @@ import sys
 from loguru import logger
 from mcp.server import FastMCP
 
-from src.constants import (
+from chift_mcp.constants import (
     CHIFT_DOMAINS,
     CHIFT_OPERATION_TYPES,
 )
@@ -70,27 +70,30 @@ def import_toolkit_functions(config: dict, mcp: FastMCP) -> None:
     # Validate configuration
     config = validate_config(config)
 
-    # Find project root (directory containing src)
+    # Find project root (directory containing chift_mcp)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     project_root = current_dir
-    while os.path.basename(project_root) != "src" and os.path.dirname(project_root) != project_root:
+    while (
+        os.path.basename(project_root) != "chift_mcp"
+        and os.path.dirname(project_root) != project_root
+    ):
         project_root = os.path.dirname(project_root)
 
-    # If we are in src directory, go one level up
-    if os.path.basename(project_root) == "src":
+    # If we are in chift_mcp directory, go one level up
+    if os.path.basename(project_root) == "chift_mcp":
         project_root = os.path.dirname(project_root)
 
     # Path to toolkit.py from project root
-    file_path = os.path.join(project_root, "src", "tools", "toolkit.py")
+    file_path = os.path.join(project_root, "chift_mcp", "tools", "toolkit.py")
 
     # Check if file exists
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"File not found: {file_path}")
 
     # Load module
-    spec = importlib.util.spec_from_file_location("src.tools.toolkit", file_path)
+    spec = importlib.util.spec_from_file_location("chift_mcp.tools.toolkit", file_path)
     module = importlib.util.module_from_spec(spec)
-    sys.modules["src.tools.toolkit"] = module
+    sys.modules["chift_mcp.tools.toolkit"] = module
     spec.loader.exec_module(module)
 
     # Get all functions from module that match configuration
@@ -111,8 +114,13 @@ def import_toolkit_functions(config: dict, mcp: FastMCP) -> None:
                     description = obj.__doc__.strip() if obj.__doc__ else None
 
                     # Register as tool
-                    mcp.add_tool(obj, name=name, description=description)
+                    try:
+                        mcp.add_tool(obj, name=name, description=description)
+                    except Exception as e:
+                        logger.error(f"Error registering tool {name}: {e}")
 
-    logger.info(f"Imported {len(matching_functions)} functions from toolkit.py based on configuration:")
-    for name in matching_functions.keys():
+    logger.info(
+        f"Imported {len(matching_functions)} functions from toolkit.py based on configuration:"
+    )
+    for name in matching_functions:
         logger.info(f"- {name}")
