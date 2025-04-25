@@ -9,10 +9,6 @@
     {
       "url": "https://api.chift.eu",
       "description": "Chift"
-    },
-    {
-      "url": "http://127.0.0.1:8000",
-      "description": "Chift-Local"
     }
   ],
   "paths": {
@@ -4232,6 +4228,23 @@
               ],
               "title": "Updated After"
             }
+          },
+          {
+            "name": "include_invoice_lines",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Invoice Lines"
+            }
           }
         ],
         "responses": {
@@ -4442,6 +4455,23 @@
               ],
               "title": "Updated After"
             }
+          },
+          {
+            "name": "include_invoice_lines",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Invoice Lines"
+            }
           }
         ],
         "responses": {
@@ -4541,6 +4571,23 @@
               ],
               "default": "false",
               "title": "Include Payments"
+            }
+          },
+          {
+            "name": "include_invoice_lines",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Invoice Lines"
             }
           }
         ],
@@ -4655,6 +4702,23 @@
               ],
               "default": "false",
               "title": "Include Payments"
+            }
+          },
+          {
+            "name": "include_invoice_lines",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Invoice Lines"
             }
           }
         ],
@@ -19864,7 +19928,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax",
             "examples": [
@@ -23994,7 +24058,14 @@
             "title": "Partner Id"
           },
           "journal_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Journal Id",
             "description": "Indicates the journal used in for the invoice. If the journal is not given, the journal will be automatically set if only one journal exists otherwise an error will be thrown."
           },
@@ -24054,7 +24125,6 @@
           "invoice_date",
           "due_date",
           "partner_id",
-          "journal_id",
           "lines"
         ],
         "title": "InvoiceItemOutMonoAnalyticPlan"
@@ -24154,7 +24224,14 @@
             "title": "Partner Id"
           },
           "journal_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Journal Id",
             "description": "Indicates the journal used in for the invoice. If the journal is not given, the journal will be automatically set if only one journal exists otherwise an error will be thrown."
           },
@@ -24214,7 +24291,6 @@
           "invoice_date",
           "due_date",
           "partner_id",
-          "journal_id",
           "lines"
         ],
         "title": "InvoiceItemOutMultiAnalyticPlans"
@@ -24624,10 +24700,6 @@
             "title": "Line Number",
             "default": 1
           },
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
           "unit_price": {
             "type": "number",
             "title": "Unit Price"
@@ -24677,6 +24749,10 @@
             "title": "Tax Code",
             "description": "Indicates the tax code used for the line. This is the ID of the Tax Code in the accounting software."
           },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
           "analytic_account": {
             "anyOf": [
               {
@@ -24691,7 +24767,6 @@
         },
         "type": "object",
         "required": [
-          "description",
           "unit_price",
           "quantity",
           "untaxed_amount",
@@ -24699,7 +24774,8 @@
           "tax_amount",
           "total",
           "account_number",
-          "tax_code"
+          "tax_code",
+          "description"
         ],
         "title": "InvoiceLineItemInMonoAnalyticPlan"
       },
@@ -24717,10 +24793,6 @@
             "title": "Line Number",
             "default": 1
           },
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
           "unit_price": {
             "type": "number",
             "title": "Unit Price"
@@ -24770,6 +24842,10 @@
             "title": "Tax Code",
             "description": "Indicates the tax code used for the line. This is the ID of the Tax Code in the accounting software."
           },
+          "description": {
+            "type": "string",
+            "title": "Description"
+          },
           "analytic_distribution": {
             "anyOf": [
               {
@@ -24788,7 +24864,6 @@
         },
         "type": "object",
         "required": [
-          "description",
           "unit_price",
           "quantity",
           "untaxed_amount",
@@ -24796,7 +24871,8 @@
           "tax_amount",
           "total",
           "account_number",
-          "tax_code"
+          "tax_code",
+          "description"
         ],
         "title": "InvoiceLineItemInMultiAnalyticPlans"
       },
@@ -24814,10 +24890,6 @@
             "title": "Line Number",
             "default": 1
           },
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
           "unit_price": {
             "type": "number",
             "title": "Unit Price"
@@ -24856,14 +24928,40 @@
             "title": "Total"
           },
           "account_number": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Account Number",
             "description": "Indicates the number of the account used for the line (e.g. 701000)."
           },
           "tax_code": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Tax Code",
             "description": "Indicates the tax code used for the line. This is the ID of the Tax Code in the accounting software."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "default": ""
           },
           "analytic_account": {
             "anyOf": [
@@ -24879,14 +24977,12 @@
         },
         "type": "object",
         "required": [
-          "description",
           "unit_price",
           "quantity",
           "untaxed_amount",
           "tax_rate",
           "tax_amount",
-          "total",
-          "account_number"
+          "total"
         ],
         "title": "InvoiceLineItemOutMonoAnalyticPlan"
       },
@@ -24904,10 +25000,6 @@
             "title": "Line Number",
             "default": 1
           },
-          "description": {
-            "type": "string",
-            "title": "Description"
-          },
           "unit_price": {
             "type": "number",
             "title": "Unit Price"
@@ -24946,14 +25038,40 @@
             "title": "Total"
           },
           "account_number": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Account Number",
             "description": "Indicates the number of the account used for the line (e.g. 701000)."
           },
           "tax_code": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Tax Code",
             "description": "Indicates the tax code used for the line. This is the ID of the Tax Code in the accounting software."
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description",
+            "default": ""
           },
           "analytic_distribution": {
             "anyOf": [
@@ -24973,14 +25091,12 @@
         },
         "type": "object",
         "required": [
-          "description",
           "unit_price",
           "quantity",
           "untaxed_amount",
           "tax_rate",
           "tax_amount",
-          "total",
-          "account_number"
+          "total"
         ],
         "title": "InvoiceLineItemOutMultiAnalyticPlans"
       },
@@ -25136,22 +25252,50 @@
             "description": "Partner ID"
           },
           "payment_method_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Payment Method Id",
             "description": "Technical id of the payment method in Chift"
           },
           "payment_method_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Payment Method Name",
             "description": "Payment method name"
           },
           "invoice_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Invoice Id",
             "description": "Technical id of the invoice in Chift"
           },
           "invoice_number": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Invoice Number",
             "description": "Invoice number"
           }
@@ -25165,11 +25309,7 @@
           "amount",
           "currency",
           "payment_date",
-          "partner_id",
-          "payment_method_id",
-          "payment_method_name",
-          "invoice_id",
-          "invoice_number"
+          "partner_id"
         ],
         "title": "InvoicingPaymentItem"
       },
@@ -25478,6 +25618,18 @@
             ],
             "title": "Next Document Numbers",
             "default": []
+          },
+          "iban": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iban",
+            "description": "IBAN of the bank account linked to the journal."
           }
         },
         "type": "object",
@@ -25596,7 +25748,14 @@
             "title": "Name"
           },
           "journal_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Journal Name"
           },
           "date": {
@@ -25648,7 +25807,6 @@
         "type": "object",
         "required": [
           "journal_id",
-          "journal_name",
           "id"
         ],
         "title": "JournalEntryMonoAnalyticPlan"
@@ -25694,7 +25852,14 @@
             "title": "Name"
           },
           "journal_name": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Journal Name"
           },
           "date": {
@@ -25746,7 +25911,6 @@
         "type": "object",
         "required": [
           "journal_id",
-          "journal_name",
           "id"
         ],
         "title": "JournalEntryMultiAnalyticPlan"
@@ -26197,7 +26361,7 @@
       "LogoImage": {
         "properties": {
           "integrationid": {
-            "type": "string",
+            "type": "integer",
             "title": "Integrationid"
           },
           "data": {
@@ -26620,7 +26784,7 @@
       "ObjectivesItem": {
         "properties": {
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the sales",
             "examples": [
@@ -26628,7 +26792,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes",
             "examples": [
@@ -28575,7 +28739,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the order",
             "examples": [
@@ -28583,7 +28747,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes of the order",
             "examples": [
@@ -28593,7 +28757,7 @@
           "total_discount": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -28609,7 +28773,7 @@
           "total_refund": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -28625,7 +28789,7 @@
           "total_tip": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -28641,7 +28805,7 @@
           "delivery_fee": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -28862,7 +29026,7 @@
             ]
           },
           "quantity": {
-            "type": "string",
+            "type": "number",
             "title": "Quantity",
             "description": "Quantity of the order line item",
             "examples": [
@@ -28870,7 +29034,7 @@
             ]
           },
           "unit_price": {
-            "type": "string",
+            "type": "number",
             "title": "Unit Price",
             "description": "Unit price (without tax) of the order line item",
             "examples": [
@@ -28878,7 +29042,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the order line item",
             "examples": [
@@ -28886,7 +29050,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes of the order line item",
             "examples": [
@@ -29036,7 +29200,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount of the payment",
             "examples": [
@@ -29046,7 +29210,7 @@
           "tip": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -29243,12 +29407,12 @@
             "title": "Id"
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount of the payments in current closure"
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total tax amount the in current closure"
           },
@@ -29551,7 +29715,7 @@
             ]
           },
           "quantity": {
-            "type": "string",
+            "type": "number",
             "title": "Quantity",
             "description": "Quantity of the order line item",
             "examples": [
@@ -29559,7 +29723,7 @@
             ]
           },
           "unit_price": {
-            "type": "string",
+            "type": "number",
             "title": "Unit Price",
             "description": "Unit price (without tax) of the order line item",
             "examples": [
@@ -29567,7 +29731,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the order line item",
             "examples": [
@@ -29575,7 +29739,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes of the order line item",
             "examples": [
@@ -29814,7 +29978,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the order",
             "examples": [
@@ -29822,7 +29986,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes of the order",
             "examples": [
@@ -29832,7 +29996,7 @@
           "total_discount": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -29848,7 +30012,7 @@
           "total_refund": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -29864,7 +30028,7 @@
           "total_tip": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -29880,7 +30044,7 @@
           "delivery_fee": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -30075,7 +30239,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount of the payment",
             "examples": [
@@ -30085,7 +30249,7 @@
           "tip": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -31637,19 +31801,29 @@
       "ReadMappingItem": {
         "properties": {
           "source_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Source Id"
           },
           "target_id": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Target Id"
           }
         },
         "type": "object",
-        "required": [
-          "source_id",
-          "target_id"
-        ],
         "title": "ReadMappingItem"
       },
       "ReadSyncItem": {
@@ -32132,7 +32306,7 @@
       "SalesItem": {
         "properties": {
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax of the sales",
             "examples": [
@@ -32140,7 +32314,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Total amount of the taxes",
             "examples": [
@@ -33128,7 +33302,7 @@
       "TotalTaxItem": {
         "properties": {
           "tax_rate": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Rate",
             "description": "Tax rate",
             "examples": [
@@ -33136,7 +33310,7 @@
             ]
           },
           "tax_amount": {
-            "type": "string",
+            "type": "number",
             "title": "Tax Amount",
             "description": "Tax amount",
             "examples": [
@@ -33144,7 +33318,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount including tax",
             "examples": [
@@ -34849,7 +35023,7 @@
       "backbone_common__models__pos__common__ProductPriceItem": {
         "properties": {
           "unit_price": {
-            "type": "string",
+            "type": "number",
             "title": "Unit Price",
             "description": "Unit price (without tax) of the product",
             "examples": [
@@ -34859,7 +35033,7 @@
           "tax_rate": {
             "anyOf": [
               {
-                "type": "string"
+                "type": "number"
               },
               {
                 "type": "null"
@@ -34896,7 +35070,7 @@
             ]
           },
           "total": {
-            "type": "string",
+            "type": "number",
             "title": "Total",
             "description": "Total amount of the discount",
             "examples": [

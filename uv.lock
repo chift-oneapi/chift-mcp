@@ -84,15 +84,15 @@ wheels = [
 
 [[package]]
 name = "chift"
-version = "0.1.90"
+version = "0.1.95"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0f/c2/4477abbaf7ec409ebb3fd313f051771f719c090091193a143fcd2ca12b99/chift-0.1.90.tar.gz", hash = "sha256:66918a1d195a31a6acdd0331fc649aa630b11ad841ae25967484df1b639472cd", size = 78730 }
+sdist = { url = "https://files.pythonhosted.org/packages/29/18/5d962331c8637510f944867483476f60f5e25ec81fbb74c748381497c8a7/chift-0.1.95.tar.gz", hash = "sha256:39bdaafff11d243d131e5cc65df6dca753d4e2dd90163456c4d90d82bf73e97c", size = 77451 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/29/f4/6031461ddf39012d42189b57d3b8eb6bd89a2835a8da0cd925f1a1546afd/chift-0.1.90-py3-none-any.whl", hash = "sha256:4d0ed5539a511f6e67c1ffac89d05132f3811844822d651d488f22410c4bdbe6", size = 90795 },
+    { url = "https://files.pythonhosted.org/packages/0a/b0/42371a1afcc01b5f99b6dae26929f103e297bb66beffe5fa59c25da112fc/chift-0.1.95-py3-none-any.whl", hash = "sha256:9e07c64439278dd38d66bd0f92d9451de87585f702cf038c55248f149d2ba8d2", size = 88604 },
 ]
 
 [[package]]
@@ -117,7 +117,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "chift", specifier = ">=0.1.90" },
+    { name = "chift", specifier = ">=0.1.95" },
     { name = "inflect", specifier = ">=7.5.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.4.1" },
