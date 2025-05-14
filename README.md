@@ -144,6 +144,38 @@ Alternatively, you can use this simplified configuration if you have the `chift-
 }
 ```
 
+#### Local Development Configuration
+
+If you want to run the server from a local clone of the repository for development purposes, you can use a configuration
+like this:
+
+```json
+{
+  "mcpServers": {
+    "chift": {
+      "command": "/usr/bin/uv",
+      "args": [
+        "run",
+        "--directory",
+        "/path/to/your/local/chift/mcp",
+        "python",
+        "-m",
+        "chift_mcp"
+      ],
+      "env": {
+        "CHIFT_CLIENT_SECRET": "your_client_secret",
+        "CHIFT_CLIENT_ID": "your_client_id",
+        "CHIFT_ACCOUNT_ID": "your_account_id",
+        "CHIFT_URL_BASE": "http://chift.localhost:8000"
+      }
+    }
+  }
+}
+```
+
+Make sure to replace the directory path with the actual path to your local clone of the repository, and update the
+environment variables with your development credentials.
+
 #### After Configuration
 
 1. Restart Claude for Desktop
@@ -182,7 +214,7 @@ async def main():
                     Please get details about consumer with ID "consumer123" 
                     and list all of its available connections.
                     '''
-            )
+        )
         print(result.data)
 
 
@@ -254,7 +286,8 @@ The following environment variables are used by the Chift MCP Server:
 
 ## 🚀 Available Tools
 
-The Chift MCP Server dynamically generates tools based on the Chift OpenAPI specification. These tools provide access to various Chift API endpoints and include operations for:
+The Chift MCP Server dynamically generates tools based on the Chift OpenAPI specification. These tools provide access to
+various Chift API endpoints and include operations for:
 
 - Retrieving financial data
 - Managing your financial connections
