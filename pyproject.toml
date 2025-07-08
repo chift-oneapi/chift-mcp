@@ -37,8 +37,9 @@ include = ["src/chift_mcp"]
 [tool.poe.tasks]
 lint = "ruff check . --show-fixes --fix"
 format = "ruff format ."
+format-check = "ruff format --check ."
 test = "pytest tests"
-install = "uv sync"
+install = "uv sync --dev"
 
 
 [tool.ruff]
