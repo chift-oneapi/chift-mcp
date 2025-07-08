@@ -18,7 +18,7 @@ dependencies = [
 [project.scripts]
 chift-mcp-server = "chift_mcp.__main__:main"
 
-[project.optional-dependencies]
+[dependency-groups]
 dev = [
     "pytest",
     "ruff>=0.3.4",
@@ -35,10 +35,11 @@ include = ["src/chift_mcp"]
 "src/chift_mcp" = "chift_mcp"
 
 [tool.poe.tasks]
-lint = "ruff check . --show-fixes --fix"
-format = "ruff format ."
+lint = "ruff check . --show-fixes --fix --config pyproject.toml"
+format = "ruff format . --config pyproject.toml"
+format-check = "ruff format --check . --config pyproject.toml"
 test = "pytest tests"
-install = "uv sync"
+install = "uv sync --dev"
 
 
 [tool.ruff]
@@ -52,7 +53,7 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["B018", "T201"]
+"tests/**/*.py" = ["B018", "T201", "E402", "F811", "E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["chift_mcp"]
