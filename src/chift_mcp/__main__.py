@@ -1,6 +1,7 @@
 import textwrap
 
 import chift
+from chift.openapi.openapi import ConsumerItem
 
 from mcp.server import FastMCP
 
@@ -56,12 +57,12 @@ def register_tools(mcp: FastMCP):
     """Register MCP tools for consumers and connections."""
 
     @mcp.tool()
-    def consumers() -> list[chift.Consumer]:
+    def consumers() -> list[ConsumerItem]:
         """Get list of available consumers."""
         return chift.Consumer.all()
 
     @mcp.tool()
-    def get_consumer(consumer_id: str) -> chift.Consumer:
+    def get_consumer(consumer_id: str) -> ConsumerItem:
         """Get specific consumer by ID."""
         return chift.Consumer.get(chift_id=consumer_id)
 
