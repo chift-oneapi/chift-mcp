@@ -1,6 +1,6 @@
 [project]
 name = "chift-mcp-server"
-version = "0.1.1"
+version = "0.1.2"
 description = "MCP Server to interact with Chift API via Chift Python SDK"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.11,<4.0"
