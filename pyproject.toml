@@ -2,7 +2,7 @@
 name = "chift-mcp-server"
 version = "0.1.2"
 description = "MCP Server to interact with Chift API via Chift Python SDK"
-authors = [{ name = "Your Name", email = "you@example.com" }]
+authors = [{ name = "Dima Redchyts", email = "dima.redchyts@chift.eu" }]
 requires-python = ">=3.11,<4.0"
 readme = "README.md"
 license = "MIT"
