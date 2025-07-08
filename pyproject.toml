@@ -35,9 +35,9 @@ include = ["src/chift_mcp"]
 "src/chift_mcp" = "chift_mcp"
 
 [tool.poe.tasks]
-lint = "ruff check . --show-fixes --fix"
-format = "ruff format ."
-format-check = "ruff format --check ."
+lint = "ruff check . --show-fixes --fix --config pyproject.toml"
+format = "ruff format . --config pyproject.toml"
+format-check = "ruff format --check . --config pyproject.toml"
 test = "pytest tests"
 install = "uv sync --dev"
 
@@ -53,7 +53,7 @@ fixable = ["ALL"]
 unfixable = []
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["B018", "T201"]
+"tests/**/*.py" = ["B018", "T201", "E402", "F811", "E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["chift_mcp"]

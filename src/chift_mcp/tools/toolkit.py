@@ -1610,7 +1610,7 @@ def invoicing_get_contacts(
         consumer_id (str): The consumer ID
         page (int): Page number for pagination
         size (int): Number of items per page
-        contact_type (ContactType): Filter by contact type ("prospect", "customer", "supplier", "all")
+        contact_type (ContactType): Filter by contact type
 
     Returns:
         ChiftPageContactItemOut: Paginated list of contacts
@@ -1878,7 +1878,7 @@ def payment_get_transaction(
         consumer_id (str): The consumer ID
         page (int): Page number for pagination
         size (int): Number of items per page
-        accounting_category (TransactionAccountingCategory): Filter by accounting category ("all", "unknown", "payout", "payout_cancel", "payment", "payment_cancel", "fee", "fee_cancel", "invoice", "internal_move")
+        accounting_category (TransactionAccountingCategory)
         starting_from (str): Start from specific transaction ID
         balance_id (str): Filter by specific balance ID
         date_from (str): Start date filter in YYYY-MM-DD format
