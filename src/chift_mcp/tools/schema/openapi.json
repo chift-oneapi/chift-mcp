@@ -455,9 +455,43 @@
           "400": {
             "content": {
               "application/json": {
-                "example": {
-                  "message": "There is already an active connection for the integrationid {integrationid}. Only one can be created for each consumer for each integrationid.",
-                  "status": "error"
+                "examples": {
+                  "Integration is not valid or active": {
+                    "value": {
+                      "message": "The specified integrationid is not valid, is not active or does not exist",
+                      "status": "error"
+                    }
+                  },
+                  "Connection already exists": {
+                    "value": {
+                      "message": "There is already an active connection for the integrationid {integrationid}. Only one can be created for each consumer for each integrationid.",
+                      "status": "error"
+                    }
+                  },
+                  "Invalid country code": {
+                    "value": {
+                      "message": "{country_code} is not a valid country code.",
+                      "status": "error"
+                    }
+                  },
+                  "Country not supported": {
+                    "value": {
+                      "message": "No integration supports country '{country_code}'",
+                      "status": "error"
+                    }
+                  },
+                  "Missing credentials": {
+                    "value": {
+                      "message": "Missing at least one credential for this integration",
+                      "status": "error"
+                    }
+                  },
+                  "Missing postconnection value": {
+                    "value": {
+                      "message": "Missing at least one post connection value for this integration. When providing post connection values, make sure to provide all mandatory post connection values.",
+                      "status": "error"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ChiftError"
@@ -481,14 +515,18 @@
             "description": "Not Found"
           },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Invalid datetime format in key {key}",
+                  "status": "error"
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ChiftError"
                 }
               }
-            }
+            },
+            "description": "Unprocessable Entity"
           }
         }
       }
@@ -554,9 +592,31 @@
           "400": {
             "content": {
               "application/json": {
-                "example": {
-                  "message": "The specified connectionid is not valid",
-                  "status": "error"
+                "examples": {
+                  "Could not retrieve connections": {
+                    "value": {
+                      "message": "Existing connections could not be retrived",
+                      "status": "error"
+                    }
+                  },
+                  "Invalid connectionid": {
+                    "value": {
+                      "message": "The specified connectionid is not valid",
+                      "status": "error"
+                    }
+                  },
+                  "Missing credentials": {
+                    "value": {
+                      "message": "Missing at least one credential for this integration",
+                      "status": "error"
+                    }
+                  },
+                  "Missing postconnection value": {
+                    "value": {
+                      "message": "Missing at least one post connection value for this integration. When providing post connection values, make sure to provide all mandatory post connection values.",
+                      "status": "error"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ChiftError"
@@ -580,14 +640,18 @@
             "description": "Not Found"
           },
           "422": {
-            "description": "Validation Error",
             "content": {
               "application/json": {
+                "example": {
+                  "message": "Invalid datetime format in key {key}",
+                  "status": "error"
+                },
                 "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
+                  "$ref": "#/components/schemas/ChiftError"
                 }
               }
-            }
+            },
+            "description": "Unprocessable Entity"
           }
         }
       },
@@ -1674,9 +1738,19 @@
           "404": {
             "content": {
               "application/json": {
-                "example": {
-                  "message": "The flow does not exist",
-                  "status": "error"
+                "examples": {
+                  "Sync not found": {
+                    "value": {
+                      "message": "The sync does not exist",
+                      "status": "error"
+                    }
+                  },
+                  "Flow not found": {
+                    "value": {
+                      "message": "The flow does not exist",
+                      "status": "error"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ChiftError"
@@ -1688,9 +1762,31 @@
           "400": {
             "content": {
               "application/json": {
-                "example": {
-                  "message": "{integrationid} is not part of the selected integrations of the sync",
-                  "status": "error"
+                "examples": {
+                  "One API integration conflict": {
+                    "value": {
+                      "message": "You can only provide one integrationid for each selected One API",
+                      "status": "error"
+                    }
+                  },
+                  "Integration not in sync": {
+                    "value": {
+                      "message": "{integrationid} is not part of the selected integrations of the sync",
+                      "status": "error"
+                    }
+                  },
+                  "Invalid country code": {
+                    "value": {
+                      "message": "{country_code} is not a valid country code.",
+                      "status": "error"
+                    }
+                  },
+                  "No integrations support country": {
+                    "value": {
+                      "message": "No integration supports country '{country_code}'",
+                      "status": "error"
+                    }
+                  }
                 },
                 "schema": {
                   "$ref": "#/components/schemas/ChiftError"
@@ -2530,6 +2626,24 @@
               "default": "all"
             },
             "description": "The search query to filter issues by issue status."
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/IssueLevel"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The search query to filter issues by issue level.",
+              "title": "Level"
+            },
+            "description": "The search query to filter issues by issue level."
           }
         ],
         "responses": {
@@ -2623,6 +2737,24 @@
               "default": "all"
             },
             "description": "The search query to filter issues by issue status."
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/IssueLevel"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The search query to filter issues by issue level.",
+              "title": "Level"
+            },
+            "description": "The search query to filter issues by issue level."
           }
         ],
         "responses": {
@@ -2667,10 +2799,80 @@
         }
       }
     },
+    "/issues/{issue_id}": {
+      "get": {
+        "tags": [
+          "Issues"
+        ],
+        "summary": "Get details about one issue",
+        "description": "Returns one specific issue. This includes as well the list of events for this issue.",
+        "operationId": "issues_get_issue",
+        "parameters": [
+          {
+            "name": "issue_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Issue Id"
+            }
+          },
+          {
+            "name": "last_execution_only",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "description": "If true, only the events related to the last execution will be returned in the list of events.",
+              "default": false,
+              "title": "Last Execution Only"
+            },
+            "description": "If true, only the events related to the last execution will be returned in the list of events."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtendedIssueItem"
+                }
+              }
+            }
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "The issue does not exist.",
+                  "status": "error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ChiftError"
+                }
+              }
+            },
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/consumers/{consumer_id}/accounting/folders": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Folders"
         ],
         "summary": "Get Folders",
         "operationId": "accounting_get_folders",
@@ -2731,7 +2933,8 @@
     "/consumers/{consumer_id}/accounting/bookyears": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Book years"
         ],
         "summary": "Get Bookyears",
         "operationId": "accounting_get_bookyears",
@@ -2831,7 +3034,8 @@
     "/consumers/{consumer_id}/accounting/analytic-plans": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic plans"
         ],
         "summary": "Get Analytic Plans",
         "operationId": "accounting_get_analytic_plans",
@@ -2931,7 +3135,8 @@
     "/consumers/{consumer_id}/accounting/clients": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Clients"
         ],
         "summary": "Create client",
         "description": "Create a new client",
@@ -3029,7 +3234,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Clients"
         ],
         "summary": "Get clients",
         "description": "Returns a list of accounting clients",
@@ -3163,7 +3369,8 @@
     "/consumers/{consumer_id}/accounting/clients/{client_id}": {
       "patch": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Clients"
         ],
         "summary": "Update client",
         "description": "Endpoint that gives the possibility to update an accounting client",
@@ -3268,7 +3475,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Clients"
         ],
         "summary": "Get one client",
         "description": "Returns a specific accounting client",
@@ -3365,7 +3573,8 @@
     "/consumers/{consumer_id}/accounting/suppliers": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Suppliers"
         ],
         "summary": "Create supplier",
         "description": "Create a new supplier",
@@ -3463,7 +3672,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Suppliers"
         ],
         "summary": "Get suppliers",
         "description": "Returns a list of accounting suppliers",
@@ -3597,7 +3807,8 @@
     "/consumers/{consumer_id}/accounting/suppliers/{supplier_id}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Suppliers"
         ],
         "summary": "Get one supplier",
         "description": "Returns one accounting supplier",
@@ -3692,7 +3903,8 @@
       },
       "patch": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Suppliers"
         ],
         "summary": "Update one supplier",
         "description": "Update an accounting supplier",
@@ -3799,7 +4011,8 @@
     "/consumers/{consumer_id}/accounting/invoices": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Create sale/purchase entry",
         "description": "Create a new sale/purchase accounting entry",
@@ -3930,7 +4143,8 @@
     "/consumers/{consumer_id}/accounting/invoices/multi-analytic-plans": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Create sale/purchase entry (Multiple plans)",
         "description": "Create a new sale/purchase entry with multiple analytic plans in the accounting",
@@ -4061,7 +4275,8 @@
     "/consumers/{consumer_id}/accounting/invoices/type/{invoice_type}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Get invoices by type (sale/purchase entries)",
         "description": "Returns a list of invoices by a specific type (=sale/purchase entries). Each line of the invoice will include the analytic account linked to default analytic plan. Optionally dates can be defined to retrieve invoice from a certain date to another date",
@@ -4245,6 +4460,23 @@
               "default": "false",
               "title": "Include Invoice Lines"
             }
+          },
+          {
+            "name": "include_partner_info",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Partner Info"
+            }
           }
         ],
         "responses": {
@@ -4288,7 +4520,8 @@
     "/consumers/{consumer_id}/accounting/invoices/multi-analytic-plans/type/{invoice_type}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Get invoices by type (sale/purchase entries - Multiple Analytic Plans)",
         "description": "Returns a list of invoices by a specific type (=sale/purchase entries) with invoice lines including multiple analytic plans. Optionally dates can be defined to retrieve invoice from a certain date to another date",
@@ -4472,6 +4705,23 @@
               "default": "false",
               "title": "Include Invoice Lines"
             }
+          },
+          {
+            "name": "include_partner_info",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Partner Info"
+            }
           }
         ],
         "responses": {
@@ -4515,7 +4765,8 @@
     "/consumers/{consumer_id}/accounting/invoices/{invoice_id}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Get one invoice (sale/purchase entry)",
         "description": "Returns a specific invoice (sale/purchase entry). Each line will include the analytic account linked to default analytic plan",
@@ -4589,6 +4840,23 @@
               "default": "false",
               "title": "Include Invoice Lines"
             }
+          },
+          {
+            "name": "include_partner_info",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Partner Info"
+            }
           }
         ],
         "responses": {
@@ -4646,7 +4914,8 @@
     "/consumers/{consumer_id}/accounting/invoices/multi-analytic-plans/{invoice_id}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Get one invoice (sale/purchase entry - Multiple Analytic Plans)",
         "description": "Returns a specific invoice (=sale/purchase entry) with invoice lines /oincluding multiple analytic plans",
@@ -4720,6 +4989,23 @@
               "default": "false",
               "title": "Include Invoice Lines"
             }
+          },
+          {
+            "name": "include_partner_info",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/BoolParam"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": "false",
+              "title": "Include Partner Info"
+            }
           }
         ],
         "responses": {
@@ -4777,7 +5063,8 @@
     "/consumers/{consumer_id}/accounting/accounts": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Ledger accounts"
         ],
         "summary": "Create ledger account",
         "description": "Create a new ledger account in the chart of accounts",
@@ -4858,10 +5145,96 @@
         }
       }
     },
+    "/consumers/{consumer_id}/accounting/bank-accounts": {
+      "post": {
+        "tags": [
+          "Accounting",
+          "Bank accounts"
+        ],
+        "summary": "Create bank account",
+        "description": "Create a new bank account in the accounting system",
+        "operationId": "accounting_create_bank_account",
+        "parameters": [
+          {
+            "name": "consumer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Consumer Id"
+            }
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountItemIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankAccountItemOut"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "A bank account/journal already exists with the same code in the accounting system.",
+                  "status": "error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ChiftError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/consumers/{consumer_id}/accounting/analytic-accounts": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Create analytic account",
         "description": "Create a new analytic account in the default analytic plan",
@@ -4943,7 +5316,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Get analytic accounts",
         "description": "Returns all analytic accounts of the default analytic plan",
@@ -5044,7 +5418,8 @@
     "/consumers/{consumer_id}/accounting/analytic-accounts/multi-analytic-plans/{analytic_plan}": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Create analytic account (Multiple Analytic Plans)",
         "description": "Create a new analytic account in a specific analytic plan",
@@ -5137,7 +5512,8 @@
     "/consumers/{consumer_id}/accounting/analytic-accounts/{analytic_account_id}": {
       "patch": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Update analytic account",
         "description": "Update one specific analytic account in the default analytic plan",
@@ -5242,7 +5618,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Get analytic account",
         "description": "Returns one specific analytic account of the default analytic plan",
@@ -5339,7 +5716,8 @@
     "/consumers/{consumer_id}/accounting/analytic-accounts/{analytic_account_id}/multi-analytic-plans/{analytic_plan}": {
       "patch": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Update analytic account (Multiple Analytic Plans)",
         "description": "Update one specific analytic account in a specific analytic plan",
@@ -5453,7 +5831,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Get analytic account (Multiple Analytic Plans)",
         "description": "Returns one specific analytic account of a specific analytic plan",
@@ -5559,7 +5938,8 @@
     "/consumers/{consumer_id}/accounting/analytic-accounts/multi-analytic-plans": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Analytic accounts"
         ],
         "summary": "Get analytic accounts (Multiple Analytic Plans)",
         "description": "Returns all analytic accounts of all analytic plans",
@@ -5660,7 +6040,8 @@
     "/consumers/{consumer_id}/accounting/journal/entries": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Get journal entries",
         "description": "Returns a list of journal entries. Each item will include the analytic account linked to default analytic plan. Optionally, you can retrieve journal entries linked to a specific client/supplier using the partner_id parameter. When retrieving entries linked to a specific client/supplier, some journal items of an entry (e.g. a miscellaneous operation) could be excluding resulting in an unbalanced journal entry.",
@@ -5843,7 +6224,8 @@
       },
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Create Journal Entry [Deprecated]",
         "description": "Create a new Journal Entry in the accounting system",
@@ -5945,7 +6327,8 @@
     "/consumers/{consumer_id}/accounting/journal/entries/multi-analytic-plans": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Get journal entries (Multiple Analytic Plans)",
         "description": "Returns a list of journal entries with invoice items including multiple analytic plan.Optionally, you can retrieve journal entries linked to a specific client/supplier using the partner_id parameter. When retrieving entries linked to a specific client/supplier, some journal items of an entry (e.g. a miscellaneous operation) could be excluding resulting in an unbalanced journal entry.",
@@ -6130,7 +6513,8 @@
     "/consumers/{consumer_id}/accounting/journal/entries/{journal_entry_id}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Get one journal entry",
         "description": "Returns a single journal entry by ID.",
@@ -6227,7 +6611,8 @@
     "/consumers/{consumer_id}/accounting/journal-entries": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Create Journal Entry",
         "description": "Create a new Journal Entry in the accounting system",
@@ -6346,7 +6731,8 @@
     "/consumers/{consumer_id}/accounting/invoices/id/{invoice_id}/payments": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Invoices"
         ],
         "summary": "Get payments by invoice ID",
         "description": "Get payments of a specific invoice based on its ID",
@@ -6470,7 +6856,8 @@
     "/consumers/{consumer_id}/accounting/journals": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journals"
         ],
         "summary": "Get journals",
         "description": "Get journals existing in the accounting system",
@@ -6571,7 +6958,8 @@
     "/consumers/{consumer_id}/accounting/journal": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journals"
         ],
         "summary": "Create journal",
         "description": "Create a journal in the accounting system",
@@ -6669,7 +7057,8 @@
     "/consumers/{consumer_id}/accounting/vat-codes": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "VAT codes"
         ],
         "summary": "Get vat codes",
         "description": "Get vat codes existing in the accounting system",
@@ -6770,7 +7159,8 @@
     "/consumers/{consumer_id}/accounting/miscellaneous-operation": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Miscellaneous operations"
         ],
         "summary": "Create miscellaneous operation",
         "description": "Create a new miscellaneous operation",
@@ -6866,7 +7256,8 @@
       },
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Miscellaneous operations"
         ],
         "summary": "Get miscellaneous operations",
         "description": "Get miscellaneous operations from the the accounting system",
@@ -7017,7 +7408,8 @@
     "/consumers/{consumer_id}/accounting/miscellaneous-operation/{operation_id}": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Miscellaneous operations"
         ],
         "summary": "Get one miscellaneous operation",
         "description": "Get a specific miscellaneous operation from the the accounting system",
@@ -7100,7 +7492,8 @@
     "/consumers/{consumer_id}/accounting/matching": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Match entries",
         "description": "Match existing entries in the accounting system",
@@ -7198,7 +7591,8 @@
     "/consumers/{consumer_id}/accounting/matching-multiple": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Match multiple entries",
         "description": "Match existing entries in the accounting system",
@@ -7300,7 +7694,8 @@
     "/consumers/{consumer_id}/accounting/invoices/pdf/{invoice_id}": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Attachments"
         ],
         "summary": "Attach a document (PDF)",
         "description": "Attach a document (PDF) to the invoice entry",
@@ -7417,7 +7812,8 @@
     "/consumers/{consumer_id}/accounting/attachments": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Attachments"
         ],
         "summary": "Get attachments",
         "description": "Returns a list of all attachments linked to an accounting entry",
@@ -7535,7 +7931,8 @@
     "/consumers/{consumer_id}/accounting/chart-of-accounts": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Ledger accounts"
         ],
         "summary": "Get chart of accounts",
         "description": "Get all accounts in the chart of accounts",
@@ -7609,6 +8006,22 @@
               ],
               "title": "Classes"
             }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/AccountTypeFilter"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Type"
+            }
           }
         ],
         "responses": {
@@ -7652,7 +8065,8 @@
     "/consumers/{consumer_id}/accounting/chart-of-accounts/balance": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Ledger accounts"
         ],
         "summary": "Get the balance of accounts",
         "description": "Get the balance of accounts in the accounting plan (chart of accounts) between specific months",
@@ -7763,7 +8177,8 @@
     "/consumers/{consumer_id}/accounting/employees": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Employees"
         ],
         "summary": "Get employees",
         "description": "Returns a list of the employees linked to the company",
@@ -7864,7 +8279,8 @@
     "/consumers/{consumer_id}/accounting/financial-entry": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Create a financial entry [Deprecated]",
         "description": "Create a new financial entry (Bank or Cash operation)",
@@ -7978,7 +8394,8 @@
     "/consumers/{consumer_id}/accounting/financial-entries": {
       "post": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Journal entries"
         ],
         "summary": "Create a financial entry",
         "description": "Create a new financial entry (Bank or Cash operation)",
@@ -8092,7 +8509,8 @@
     "/consumers/{consumer_id}/accounting/outstandings": {
       "get": {
         "tags": [
-          "Accounting"
+          "Accounting",
+          "Outstanding"
         ],
         "summary": "Get clients/suppliers outstanding items",
         "description": "Returns a list of all clients/suppliers outstanding items",
@@ -8206,10 +8624,110 @@
         }
       }
     },
+    "/consumers/{consumer_id}/accounting/export-fec": {
+      "get": {
+        "tags": [
+          "Accounting",
+          "Exports"
+        ],
+        "summary": "Export entries in FEC format",
+        "description": "Returns accounting entries according to the FEC format",
+        "operationId": "accounting_export_fec",
+        "parameters": [
+          {
+            "name": "consumer_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Consumer Id"
+            }
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Folder Id"
+            }
+          },
+          {
+            "name": "date_from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date From"
+            }
+          },
+          {
+            "name": "date_to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "title": "Date To"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FECItemOut"
+                  },
+                  "title": "Response Accounting Export Fec"
+                }
+              }
+            }
+          },
+          "400": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Error while trying to perform your request",
+                  "status": "error"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ChiftError"
+                }
+              }
+            },
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/consumers/{consumer_id}/pos/orders": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Orders"
         ],
         "summary": "Get orders",
         "description": "Returns a list of the orders",
@@ -8255,20 +8773,34 @@
           {
             "name": "date_from",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "format": "date",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
               "title": "Date From"
             }
           },
           {
             "name": "date_to",
             "in": "query",
-            "required": true,
+            "required": false,
             "schema": {
-              "type": "string",
-              "format": "date",
+              "anyOf": [
+                {
+                  "type": "string",
+                  "format": "date"
+                },
+                {
+                  "type": "null"
+                }
+              ],
               "title": "Date To"
             }
           },
@@ -8295,6 +8827,22 @@
             "schema": {
               "$ref": "#/components/schemas/States",
               "default": "all"
+            }
+          },
+          {
+            "name": "closure_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Closure Id"
             }
           }
         ],
@@ -8367,7 +8915,8 @@
     "/consumers/{consumer_id}/pos/orders/{order_id}": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Orders"
         ],
         "summary": "Get one order",
         "description": "Returns a single order",
@@ -8474,7 +9023,8 @@
       },
       "patch": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Orders"
         ],
         "summary": "Update order",
         "description": "Update one order",
@@ -8579,7 +9129,8 @@
     "/consumers/{consumer_id}/pos/locations": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Locations"
         ],
         "summary": "Get locations",
         "description": "Returns a list of the locations",
@@ -8692,7 +9243,8 @@
     "/consumers/{consumer_id}/pos/payments": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Payments"
         ],
         "summary": "Get payments",
         "description": "Returns a list of payments",
@@ -8825,7 +9377,8 @@
     "/consumers/{consumer_id}/pos/sales": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Orders"
         ],
         "summary": "Get sales",
         "description": "Returns the summary of the sales",
@@ -8947,7 +9500,8 @@
     "/consumers/{consumer_id}/pos/payment-methods": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Payment methods"
         ],
         "summary": "Get payment methods",
         "description": "Returns the list of payment methods",
@@ -9077,7 +9631,8 @@
       "get": {
         "tags": [
           "Point of Sale",
-          "customers"
+          "customers",
+          "Customers"
         ],
         "summary": "Get customers",
         "description": "Returns the list of customers",
@@ -9236,7 +9791,8 @@
       },
       "post": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Customers"
         ],
         "summary": "Create one customer",
         "description": "Create a customer",
@@ -9333,7 +9889,8 @@
       "get": {
         "tags": [
           "Point of Sale",
-          "customers"
+          "customers",
+          "Customers"
         ],
         "summary": "Get one customer",
         "description": "Returns a specific customer",
@@ -9442,7 +9999,8 @@
     "/consumers/{consumer_id}/pos/product-categories": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Categories"
         ],
         "summary": "Get product categories",
         "description": "Returns a list of product categories",
@@ -9580,7 +10138,8 @@
     "/consumers/{consumer_id}/pos/products": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Products"
         ],
         "summary": "Get products",
         "description": "Returns a list of products",
@@ -9709,7 +10268,8 @@
     "/consumers/{consumer_id}/pos/accounting-categories": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Categories"
         ],
         "summary": "Get accounting categories",
         "description": "Returns a list of accounting categories. When not available for a specific POS, it will return the same values as the product categories.",
@@ -9838,7 +10398,8 @@
     "/consumers/{consumer_id}/pos/closures/{date}": {
       "get": {
         "tags": [
-          "Point of Sale"
+          "Point of Sale",
+          "Closures"
         ],
         "summary": "Get closure info for a specific day",
         "description": "Returns whether the closure was already done for a specific day or not",
@@ -9973,9 +10534,11 @@
             "schema": {
               "type": "integer",
               "minimum": 1,
+              "description": "Page number",
               "default": 1,
               "title": "Page"
-            }
+            },
+            "description": "Page number"
           },
           {
             "name": "size",
@@ -9985,9 +10548,11 @@
               "type": "integer",
               "maximum": 100,
               "minimum": 1,
+              "description": "Page size",
               "default": 50,
               "title": "Size"
-            }
+            },
+            "description": "Page size"
           },
           {
             "name": "date_from",
@@ -10016,7 +10581,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ObjectivesItem"
+                  "$ref": "#/components/schemas/ChiftPage_ObjectivesItem_"
                 }
               }
             }
@@ -10079,7 +10644,8 @@
     "/consumers/{consumer_id}/commerce/customers": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Customers"
         ],
         "summary": "Get all customers",
         "description": "Returns a list of all the customers",
@@ -10164,7 +10730,8 @@
     "/consumers/{consumer_id}/commerce/customers/{customer_id}": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Customers"
         ],
         "summary": "Get one specific customer",
         "description": "Returns a specific customer",
@@ -10245,7 +10812,8 @@
     "/consumers/{consumer_id}/commerce/products": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Products & variants"
         ],
         "summary": "Get all products",
         "description": "Returns a list of all the products",
@@ -10330,7 +10898,8 @@
     "/consumers/{consumer_id}/commerce/products/{product_id}": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Products & variants"
         ],
         "summary": "Get one specific product",
         "description": "Returns a specific product",
@@ -10411,7 +10980,8 @@
     "/consumers/{consumer_id}/commerce/variants/{variant_id}": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Products & variants"
         ],
         "summary": "Get one specific product variant",
         "description": "Returns a specific product variant",
@@ -10492,7 +11062,8 @@
     "/consumers/{consumer_id}/commerce/variants/set_quantity/{variant_id}": {
       "post": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Products & variants"
         ],
         "summary": "Update available quantity",
         "description": "Update available quantity of a product variant in a specific location",
@@ -10583,7 +11154,8 @@
     "/consumers/{consumer_id}/commerce/locations": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Locations"
         ],
         "summary": "Get all locations",
         "description": "Returns a list of all locations",
@@ -10668,7 +11240,8 @@
     "/consumers/{consumer_id}/commerce/orders": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Orders"
         ],
         "summary": "Get all orders",
         "description": "Returns a list of all the orders",
@@ -10853,7 +11426,8 @@
       },
       "post": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Orders"
         ],
         "summary": "Create an order",
         "description": "Create a new order",
@@ -10925,7 +11499,8 @@
     "/consumers/{consumer_id}/commerce/orders/{order_id}": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Orders"
         ],
         "summary": "Get one specific order",
         "description": "Returns a specific order",
@@ -11023,7 +11598,8 @@
     "/consumers/{consumer_id}/commerce/payment-methods": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Payment methods"
         ],
         "summary": "Get all payment methods",
         "description": "Returns the list of the payment methods",
@@ -11108,7 +11684,8 @@
     "/consumers/{consumer_id}/commerce/product-categories": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Categories"
         ],
         "summary": "Get all product categories",
         "description": "Returns the list of the product categories",
@@ -11202,7 +11779,8 @@
     "/consumers/{consumer_id}/commerce/taxes": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Taxes"
         ],
         "summary": "Get all tax rates",
         "description": "Returns the list of all tax rates",
@@ -11287,7 +11865,8 @@
     "/consumers/{consumer_id}/commerce/countries": {
       "get": {
         "tags": [
-          "eCommerce"
+          "eCommerce",
+          "Countries"
         ],
         "summary": "Get all countries",
         "description": "Returns the list of all activated countries",
@@ -11372,7 +11951,8 @@
     "/consumers/{consumer_id}/invoicing/invoices": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Invoices"
         ],
         "summary": "Retrieve all invoices",
         "description": "Returns a list of invoices. Optionally invoice type and dates can be defined to retrieve invoices of a certain type from a certain date to another date",
@@ -11557,7 +12137,8 @@
       },
       "post": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Invoices"
         ],
         "summary": "Create an invoice",
         "description": "Create a new invoice.",
@@ -11625,7 +12206,8 @@
     "/consumers/{consumer_id}/invoicing/invoices/{invoice_id}": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Invoices"
         ],
         "summary": "Retrieve one invoice",
         "description": "Returns a invoice",
@@ -11723,7 +12305,8 @@
     "/consumers/{consumer_id}/invoicing/taxes": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Taxes"
         ],
         "summary": "Retrieve all taxes",
         "description": "Returns a list of all the taxes",
@@ -11808,7 +12391,8 @@
     "/consumers/{consumer_id}/invoicing/taxes/{tax_id}": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Taxes"
         ],
         "summary": "Retrieve one tax",
         "description": "Returns a tax",
@@ -11889,7 +12473,8 @@
     "/consumers/{consumer_id}/invoicing/products": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Products"
         ],
         "summary": "Retrieve all products",
         "description": "Returns a list of all the products",
@@ -11972,7 +12557,8 @@
       },
       "post": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Products"
         ],
         "summary": "Create a product",
         "description": "Create a new product.",
@@ -12040,7 +12626,8 @@
     "/consumers/{consumer_id}/invoicing/products/{product_id}": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Products"
         ],
         "summary": "Retrieve one product",
         "description": "Returns a product",
@@ -12121,7 +12708,8 @@
     "/consumers/{consumer_id}/invoicing/opportunities": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Opportunities"
         ],
         "summary": "Retrieve all opportunities",
         "description": "Returns a list of all the opportunities",
@@ -12206,7 +12794,8 @@
     "/consumers/{consumer_id}/invoicing/opportunities/{opportunity_id}": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Opportunities"
         ],
         "summary": "Retrieve one opportunity",
         "description": "Returns an opportunity",
@@ -12287,7 +12876,8 @@
     "/consumers/{consumer_id}/invoicing/contacts": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Contacts"
         ],
         "summary": "Retrieve all contacts",
         "description": "Returns a list of all the contacts. Optionally contact type can be defined to retrieve contact from a certain type.",
@@ -12379,7 +12969,8 @@
       },
       "post": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Contacts"
         ],
         "summary": "Create a contact",
         "description": "Create a new contact.",
@@ -12447,7 +13038,8 @@
     "/consumers/{consumer_id}/invoicing/contacts/{contact_id}": {
       "get": {
         "tags": [
-          "Invoicing"
+          "Invoicing",
+          "Contacts"
         ],
         "summary": "Retrieve one contact",
         "description": "Returns a contact",
@@ -12732,7 +13324,8 @@
     "/consumers/{consumer_id}/banking/financial-institutions": {
       "get": {
         "tags": [
-          "Banking"
+          "Banking",
+          "Financial institutions"
         ],
         "summary": "Get list of financial institutions",
         "description": "Returns the list of financial institutions the user consent access to",
@@ -12817,7 +13410,8 @@
     "/consumers/{consumer_id}/banking/accounts": {
       "get": {
         "tags": [
-          "Banking"
+          "Banking",
+          "Banking accounts"
         ],
         "summary": "Get list of banking accounts",
         "description": "Returns the list of banking accounts",
@@ -12902,7 +13496,8 @@
     "/consumers/{consumer_id}/banking/{account_id}/transactions": {
       "get": {
         "tags": [
-          "Banking"
+          "Banking",
+          "Transactions"
         ],
         "summary": "Get list of financial transactions",
         "description": "Returns the list of transactions of an account",
@@ -13047,7 +13642,8 @@
     "/consumers/{consumer_id}/banking/counterparts": {
       "get": {
         "tags": [
-          "Banking"
+          "Banking",
+          "Banking accounts"
         ],
         "summary": "Get aggregated list of account counterparts found in transactions",
         "description": "Returns the aggregated list of account counterpats found in transactions. Useful for categorisation.",
@@ -13182,9 +13778,10 @@
     "/consumers/{consumer_id}/payment/balances": {
       "get": {
         "tags": [
-          "Payment"
+          "Payment",
+          "Balances"
         ],
-        "summary": "Retrieve all Balances",
+        "summary": "Retrieve all balances",
         "description": "Returns a list of balances.",
         "operationId": "payment_get_balances",
         "parameters": [
@@ -13267,9 +13864,10 @@
     "/consumers/{consumer_id}/payment/transactions": {
       "get": {
         "tags": [
-          "Payment"
+          "Payment",
+          "Transactions"
         ],
-        "summary": "Retrieve all Transactions",
+        "summary": "Retrieve all transactions",
         "description": "Returns a list of transactions. Optionally transaction type and dates can be defined to retrieve transactions of a certain type from a certain date to another date",
         "operationId": "payment_get_transaction",
         "parameters": [
@@ -13435,9 +14033,10 @@
     "/consumers/{consumer_id}/payment/payments": {
       "get": {
         "tags": [
-          "Payment"
+          "Payment",
+          "Payments"
         ],
-        "summary": "Retrieve all Payments",
+        "summary": "Retrieve all payments",
         "description": "Returns a list of payments.",
         "operationId": "payment_get_payments",
         "parameters": [
@@ -13554,9 +14153,10 @@
     "/consumers/{consumer_id}/payment/payments/{payment_id}": {
       "get": {
         "tags": [
-          "Payment"
+          "Payment",
+          "Payments"
         ],
-        "summary": "Get a Payment",
+        "summary": "Get a payment",
         "description": "Returns a specific payment.",
         "operationId": "payment_get_payment",
         "parameters": [
@@ -13635,9 +14235,10 @@
     "/consumers/{consumer_id}/payment/refunds": {
       "get": {
         "tags": [
-          "Payment"
+          "Payment",
+          "Refunds"
         ],
-        "summary": "Retrieve all Refunds",
+        "summary": "Retrieve all refunds",
         "description": "Returns a list of refunds.",
         "operationId": "payment_get_refunds",
         "parameters": [
@@ -13770,7 +14371,8 @@
     "/consumers/{consumer_id}/pms/orders": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Orders"
         ],
         "summary": "Get orders (PMS)",
         "description": "Returns a list of the orders",
@@ -13928,7 +14530,8 @@
     "/consumers/{consumer_id}/pms/invoices": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Invoices"
         ],
         "summary": "Get invoices (PMS)",
         "description": "Returns a list of the invoices",
@@ -14077,7 +14680,8 @@
     "/consumers/{consumer_id}/pms/customers": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Customers"
         ],
         "summary": "Get customers (PMS)",
         "description": "Returns a list of all the customers",
@@ -14191,7 +14795,8 @@
       "get": {
         "tags": [
           "Property Management System",
-          "customers"
+          "customers",
+          "Customers"
         ],
         "summary": "Get one customer (PMS)",
         "description": "Returns a specific customer",
@@ -14300,7 +14905,8 @@
     "/consumers/{consumer_id}/pms/locations": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Locations"
         ],
         "summary": "Get locations (PMS)",
         "description": "Returns a list of the locations",
@@ -14413,7 +15019,8 @@
     "/consumers/{consumer_id}/pms/payments": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Payments"
         ],
         "summary": "Get payments (PMS)",
         "description": "Returns a list of payments",
@@ -14546,7 +15153,8 @@
     "/consumers/{consumer_id}/pms/payment-methods": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Payment methods"
         ],
         "summary": "Get payment methods (PMS)",
         "description": "Returns the list of payment methods",
@@ -14675,7 +15283,8 @@
     "/consumers/{consumer_id}/pms/accounting-categories": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Categories"
         ],
         "summary": "Get accounting categories (PMS)",
         "description": "Returns a list of accounting categories. When not available for a specific PMS,it will return the same values as the product categories.",
@@ -14788,7 +15397,8 @@
     "/consumers/{consumer_id}/pms/closures/{date}": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Closures"
         ],
         "summary": "Get closure info for a specific day (PMS)",
         "description": "Returns whether the closure was already done for a specific day or not",
@@ -14900,11 +15510,12 @@
     "/consumers/{consumer_id}/pms/taxes": {
       "get": {
         "tags": [
-          "Property Management System"
+          "Property Management System",
+          "Taxes"
         ],
         "summary": "Get tax rates (PMS)",
         "description": "Returns a list of the tax rates",
-        "operationId": "pms_taxes",
+        "operationId": "pms_get_taxes",
         "parameters": [
           {
             "name": "consumer_id",
@@ -15185,6 +15796,17 @@
         ],
         "title": "AccountToCreate"
       },
+      "AccountTypeFilter": {
+        "type": "string",
+        "enum": [
+          "bank",
+          "cash",
+          "income",
+          "expense",
+          "vat"
+        ],
+        "title": "AccountTypeFilter"
+      },
       "AccountingCategoryItem": {
         "properties": {
           "id": {
@@ -15316,6 +15938,18 @@
               }
             ],
             "title": "Payable Account"
+          },
+          "reversed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reversed",
+            "default": false
           }
         },
         "type": "object",
@@ -16135,6 +16769,17 @@
             ],
             "title": "Active",
             "default": true
+          },
+          "parent_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parent Id"
           }
         },
         "type": "object",
@@ -16263,6 +16908,179 @@
           "create_date"
         ],
         "title": "BalanceItemOut"
+      },
+      "BankAccountItemIn": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Code",
+            "description": "A userfriendly code to represent the bank account. This will be used as the code of the journal if we need to create a journal for the bank account."
+          },
+          "currency": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Currency",
+            "description": "Currency of the bank account."
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name",
+            "description": "Name of the bank account. Represents this specific bank account in the accounting system."
+          },
+          "account_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number",
+            "description": "Unique number representing the bank account. At least one of the fields 'account_number' or 'IBAN' must be filled in."
+          },
+          "iban": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iban",
+            "description": "IBAN of the bank account. At least one of the fields 'account_number' or 'IBAN' must be filled in."
+          },
+          "bank_name": {
+            "type": "string",
+            "title": "Bank Name",
+            "description": "Name of the bank linked to the bank account."
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "currency",
+          "bank_name"
+        ],
+        "title": "BankAccountItemIn"
+      },
+      "BankAccountItemOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Code",
+            "description": "A userfriendly code to represent the bank account. This will be used as the code of the journal if we need to create a journal for the bank account."
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "description": "Currency of the bank account."
+          },
+          "account_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Name",
+            "description": "Name of the bank account. Represents this specific bank account in the accounting system."
+          },
+          "account_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number",
+            "description": "Unique number representing the bank account."
+          },
+          "iban": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iban",
+            "description": "IBAN of the bank account."
+          },
+          "bank_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Name",
+            "description": "Name of the bank linked to the bank account."
+          },
+          "journal_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Journal Id",
+            "description": "Indicates the journal used in the accounting system to represent the bank account. The journal contains all the transactions related to this specific bank account."
+          },
+          "ledger_account": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ledger Account",
+            "description": "Indicates the ledger account used in the accounting system to represent the bank account. The ledger account is used in all the transactions related to this specific bank account. This ledger account is used to track the balance of the bank account."
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "BankAccountItemOut"
       },
       "BankingAccountItem": {
         "properties": {
@@ -18036,6 +18854,46 @@
         ],
         "title": "ChiftPage[MiscellaneousOperationOut]"
       },
+      "ChiftPage_ObjectivesItem_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ObjectivesItem"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total"
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Page"
+          },
+          "size": {
+            "type": "integer",
+            "minimum": 1.0,
+            "title": "Size"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "page",
+          "size"
+        ],
+        "title": "ChiftPage[ObjectivesItem]"
+      },
       "ChiftPage_OpportunityItem_": {
         "properties": {
           "items": {
@@ -19558,21 +20416,6 @@
             "title": "Active",
             "default": true
           },
-          "addresses": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/backbone_common__models__common__AddressItemOut"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Addresses",
-            "default": []
-          },
           "account_number": {
             "anyOf": [
               {
@@ -19618,6 +20461,21 @@
             ],
             "title": "Last Updated On",
             "description": "The last time the client has been updated."
+          },
+          "addresses": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/backbone_common__models__common__AddressItemOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addresses",
+            "default": []
           }
         },
         "type": "object",
@@ -20846,6 +21704,18 @@
             "description": "[OPTIONAL] Can be used to specify maximum one integrationid for each One API that you want to highlight. If specified, only this connector will be displayed to your clients.",
             "default": []
           },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "description": "ISO 3166-1 alpha-2 country code to filter connectors by country. Ignored if integrationids are provided."
+          },
           "link_metadata": {
             "anyOf": [
               {
@@ -21581,6 +22451,189 @@
         ],
         "title": "ExecutionType"
       },
+      "ExtendedIssueItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "consumer_id": {
+            "type": "string",
+            "title": "Consumer Id"
+          },
+          "connection_id": {
+            "type": "string",
+            "title": "Connection Id"
+          },
+          "integration_id": {
+            "type": "integer",
+            "title": "Integration Id"
+          },
+          "integration_name": {
+            "type": "string",
+            "title": "Integration Name"
+          },
+          "created_on": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created On"
+          },
+          "updated_on": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated On"
+          },
+          "last_seen": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Last Seen"
+          },
+          "error": {
+            "$ref": "#/components/schemas/ErrorInfo"
+          },
+          "occurrences": {
+            "type": "integer",
+            "title": "Occurrences"
+          },
+          "level": {
+            "$ref": "#/components/schemas/IssueLevel"
+          },
+          "events": {
+            "items": {
+              "$ref": "#/components/schemas/IssueEvent"
+            },
+            "type": "array",
+            "title": "Events",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "consumer_id",
+          "connection_id",
+          "integration_id",
+          "integration_name",
+          "created_on",
+          "updated_on",
+          "last_seen",
+          "error",
+          "occurrences",
+          "level"
+        ],
+        "title": "ExtendedIssueItem"
+      },
+      "FECItemOut": {
+        "properties": {
+          "JournalCode": {
+            "type": "string",
+            "title": "Journalcode"
+          },
+          "JournalLib": {
+            "type": "string",
+            "title": "Journallib"
+          },
+          "EcritureNum": {
+            "type": "string",
+            "title": "Ecriturenum"
+          },
+          "EcritureDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Ecrituredate"
+          },
+          "CompteNum": {
+            "type": "string",
+            "title": "Comptenum"
+          },
+          "CompteLib": {
+            "type": "string",
+            "title": "Comptelib"
+          },
+          "CompAuxNum": {
+            "type": "string",
+            "title": "Compauxnum"
+          },
+          "CompAuxLib": {
+            "type": "string",
+            "title": "Compauxlib"
+          },
+          "PieceRef": {
+            "type": "string",
+            "title": "Pieceref"
+          },
+          "PieceDate": {
+            "type": "string",
+            "format": "date",
+            "title": "Piecedate"
+          },
+          "Debit": {
+            "type": "number",
+            "title": "Debit"
+          },
+          "Credit": {
+            "type": "number",
+            "title": "Credit"
+          },
+          "EcritureLet": {
+            "type": "string",
+            "title": "Ecriturelet"
+          },
+          "DateLet": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Datelet"
+          },
+          "ValidDate": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Validdate"
+          },
+          "Montantdevise": {
+            "type": "number",
+            "title": "Montantdevise"
+          },
+          "Idevise": {
+            "type": "string",
+            "title": "Idevise"
+          }
+        },
+        "type": "object",
+        "required": [
+          "JournalCode",
+          "JournalLib",
+          "EcritureNum",
+          "EcritureDate",
+          "CompteNum",
+          "CompteLib",
+          "CompAuxNum",
+          "CompAuxLib",
+          "PieceRef",
+          "PieceDate",
+          "Debit",
+          "Credit",
+          "EcritureLet",
+          "DateLet",
+          "ValidDate",
+          "Montantdevise",
+          "Idevise"
+        ],
+        "title": "FECItemOut"
+      },
       "FeesItem": {
         "properties": {
           "id": {
@@ -21845,7 +22898,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "reference": {
@@ -21875,6 +22928,7 @@
               "$ref": "#/components/schemas/FinancialEntryLineItem"
             },
             "type": "array",
+            "minItems": 1,
             "title": "Items"
           },
           "pdf": {
@@ -21926,7 +22980,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "reference": {
@@ -21956,6 +23010,7 @@
               "$ref": "#/components/schemas/FinancialEntryLineItemOld"
             },
             "type": "array",
+            "minItems": 1,
             "title": "Items"
           },
           "pdf": {
@@ -22007,7 +23062,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "reference": {
@@ -22075,7 +23130,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "reference": {
@@ -22621,6 +23676,78 @@
         ],
         "title": "FlowTrigger"
       },
+      "FolderAddressItem": {
+        "properties": {
+          "street": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Street"
+          },
+          "number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Number"
+          },
+          "box": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Box"
+          },
+          "postal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Postal Code"
+          },
+          "city": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "City"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          }
+        },
+        "type": "object",
+        "title": "FolderAddressItem"
+      },
       "FolderItem": {
         "properties": {
           "id": {
@@ -22664,6 +23791,31 @@
               }
             ],
             "title": "Company Number"
+          },
+          "main_currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Main Currency"
+          },
+          "addresses": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/FolderAddressItem"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addresses"
           }
         },
         "type": "object",
@@ -22722,6 +23874,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
+            "description": "Indicates the exchange rate at the date of the entry. Must be filled in when creating the entry in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "date": {
@@ -22734,6 +23887,7 @@
               "$ref": "#/components/schemas/GenericJournalItem"
             },
             "type": "array",
+            "minItems": 2,
             "title": "Items"
           },
           "pdf": {
@@ -22815,7 +23969,7 @@
               }
             ],
             "title": "Force General Account",
-            "description": "For ustomer/supplier/employee accounts we determine the general account based on the configurations in the accounting system. The general account can also be forced by specifying the value in this field."
+            "description": "For customer/supplier/employee accounts we determine the general account based on the configurations in the accounting system. The general account can also be forced by specifying the value in this field."
           },
           "prioritise_thirdparty_account": {
             "anyOf": [
@@ -22895,7 +24049,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Information about the thirdparty account that must be created. In some tools we cannot create a thirdparty account (=client/supplier) by API. Missing thirdparty accounts must be explicitly provided during the entry creation and will be automatically created by the accounting software. This is for example the case for Tiime."
           }
         },
         "type": "object",
@@ -23020,6 +24175,26 @@
             "title": "Credentials",
             "description": "List of credentials that must be specified to create a connection. Can be used if you want to pass credentials on connection creation. Not compatible with oAuth2 routes.",
             "default": []
+          },
+          "supported_countries": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supported Countries",
+            "description": "Country codes (ISO 3166-1 alpha-2) where this integration is supported. If not defined, the integration is supported globally.",
+            "examples": [
+              "BE",
+              "FR",
+              "ES"
+            ]
           }
         },
         "type": "object",
@@ -23295,7 +24470,9 @@
             ],
             "title": "Invoice Number",
             "description": "Number/sequence",
-            "example": "INV-12345"
+            "examples": [
+              "INV-12345"
+            ]
           },
           "creation_date": {
             "anyOf": [
@@ -23309,7 +24486,9 @@
             ],
             "title": "Creation Date",
             "description": "Creation date of the invoice",
-            "example": "2023-10-01T12:00:00"
+            "examples": [
+              "2023-10-01T12:00:00"
+            ]
           },
           "closing_date": {
             "anyOf": [
@@ -23323,7 +24502,9 @@
             ],
             "title": "Closing Date",
             "description": "Closing date of the invoice",
-            "example": "2023-10-10T12:00:00"
+            "examples": [
+              "2023-10-10T12:00:00"
+            ]
           },
           "partners": {
             "anyOf": [
@@ -23364,7 +24545,7 @@
               }
             ],
             "title": "Invoice Number",
-            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation."
+            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation. In some accounting software the invoice number is a required field (see connector's limitations)."
           },
           "currency": {
             "type": "string",
@@ -23476,7 +24657,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the invoice. Must be filled in when creating the invoice in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the invoice. Must be filled in when creating the invoice in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "invoice_correction": {
@@ -23509,7 +24690,8 @@
                 "type": "null"
               }
             ],
-            "title": "Shipping Country"
+            "title": "Shipping Country",
+            "description": "Format: ISO 3166-1 codes."
           },
           "partner_info": {
             "anyOf": [
@@ -23519,7 +24701,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Information about the client/supplier that must be created. In some tools we cannot create a client/supplier by API. Missing clients/suppliers must be explicitly provided during the invoice creation and will be automatically created by the accounting software. This is for example the case for Tiime."
           },
           "lines": {
             "items": {
@@ -23558,7 +24741,7 @@
               }
             ],
             "title": "Invoice Number",
-            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation."
+            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation. In some accounting software the invoice number is a required field (see connector's limitations)."
           },
           "currency": {
             "type": "string",
@@ -23670,7 +24853,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the invoice. Must be filled in when creating the invoice in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the invoice. Must be filled in when creating the invoice in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "invoice_correction": {
@@ -23703,7 +24886,8 @@
                 "type": "null"
               }
             ],
-            "title": "Shipping Country"
+            "title": "Shipping Country",
+            "description": "Format: ISO 3166-1 codes."
           },
           "partner_info": {
             "anyOf": [
@@ -23713,7 +24897,8 @@
               {
                 "type": "null"
               }
-            ]
+            ],
+            "description": "Information about the client/supplier that must be created. In some tools we cannot create a client/supplier by API. Missing clients/suppliers must be explicitly provided during the invoice creation and will be automatically created by the accounting software. This is for example the case for Tiime."
           },
           "lines": {
             "items": {
@@ -23978,7 +25163,7 @@
               }
             ],
             "title": "Invoice Number",
-            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation."
+            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation. In some accounting software the invoice number is a required field (see connector's limitations)."
           },
           "currency": {
             "type": "string",
@@ -24106,6 +25291,17 @@
             ],
             "title": "Last Updated On",
             "description": "The last time the invoice has been updated."
+          },
+          "partner": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Partner"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Extra information about the partner (client/supplier) linked to the invoice. To ensure this information is returned, you need to use the include_partner_info query parameter."
           },
           "lines": {
             "items": {
@@ -24144,7 +25340,7 @@
               }
             ],
             "title": "Invoice Number",
-            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation."
+            "description": "Number of the invoice. If left empty, will be automatically generated by the accounting system at creation. In some accounting software the invoice number is a required field (see connector's limitations)."
           },
           "currency": {
             "type": "string",
@@ -24272,6 +25468,17 @@
             ],
             "title": "Last Updated On",
             "description": "The last time the invoice has been updated."
+          },
+          "partner": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Partner"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Extra information about the partner (client/supplier) linked to the invoice. To ensure this information is returned, you need to use the include_partner_info query parameter."
           },
           "lines": {
             "items": {
@@ -25114,7 +26321,9 @@
           "type": {
             "$ref": "#/components/schemas/PartnerType",
             "description": "Type of the partner",
-            "example": "account"
+            "examples": [
+              "account"
+            ]
           },
           "address": {
             "anyOf": [
@@ -25138,7 +26347,9 @@
             ],
             "title": "First Name",
             "description": "First name of the partner. In case the partner is an individual.",
-            "example": "John"
+            "examples": [
+              "John"
+            ]
           },
           "last_name": {
             "anyOf": [
@@ -25151,7 +26362,9 @@
             ],
             "title": "Last Name",
             "description": "Last name of the partner. In case the partner is an individual.",
-            "example": "Doe"
+            "examples": [
+              "Doe"
+            ]
           },
           "company_name": {
             "anyOf": [
@@ -25164,7 +26377,9 @@
             ],
             "title": "Company Name",
             "description": "Company name of the partner. In case the partner is a company.",
-            "example": "Acme Corp"
+            "examples": [
+              "Acme Corp"
+            ]
           }
         },
         "type": "object",
@@ -25308,8 +26523,7 @@
           "description",
           "amount",
           "currency",
-          "payment_date",
-          "partner_id"
+          "payment_date"
         ],
         "title": "InvoicingPaymentItem"
       },
@@ -25386,6 +26600,19 @@
             ],
             "description": "Scope",
             "default": "unknown"
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active",
+            "description": "Is the tax active?",
+            "default": true
           }
         },
         "type": "object",
@@ -25397,6 +26624,53 @@
           "type"
         ],
         "title": "InvoicingVatCode"
+      },
+      "IssueEvent": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "execution_id": {
+            "type": "string",
+            "title": "Execution Id"
+          },
+          "created_on": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created On"
+          },
+          "context": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Context"
+          },
+          "message": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "execution_id",
+          "created_on"
+        ],
+        "title": "IssueEvent"
       },
       "IssueItem": {
         "properties": {
@@ -25441,6 +26715,9 @@
           "occurrences": {
             "type": "integer",
             "title": "Occurrences"
+          },
+          "level": {
+            "$ref": "#/components/schemas/IssueLevel"
           }
         },
         "type": "object",
@@ -25454,9 +26731,18 @@
           "updated_on",
           "last_seen",
           "error",
-          "occurrences"
+          "occurrences",
+          "level"
         ],
         "title": "IssueItem"
+      },
+      "IssueLevel": {
+        "type": "string",
+        "enum": [
+          "error",
+          "warning"
+        ],
+        "title": "IssueLevel"
       },
       "IssueStatus": {
         "type": "string",
@@ -25630,6 +26916,31 @@
             ],
             "title": "Iban",
             "description": "IBAN of the bank account linked to the journal."
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "description": "Currency of the journal. If empty, the journal follows the currency of the accounting folder."
+          },
+          "other_currencies_allowed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Other Currencies Allowed",
+            "description": "Indicates if the journal allows other currencies. If it doesn't allow other currencies an exchange rate must be provided for Chift to convert the amounts to the journal currency. This only applicable if the journal currency is the same as the accounting folder currency.",
+            "default": true
           }
         },
         "type": "object",
@@ -25683,6 +26994,7 @@
               "$ref": "#/components/schemas/JournalItemIn"
             },
             "type": "array",
+            "minItems": 2,
             "title": "Items"
           },
           "pdf": {
@@ -26383,6 +27695,7 @@
               "type": "string"
             },
             "type": "array",
+            "minItems": 2,
             "title": "Entries"
           },
           "partner_id": {
@@ -26443,7 +27756,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "lines": {
@@ -26596,7 +27909,7 @@
               }
             ],
             "title": "Currency Exchange Rate",
-            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system.",
+            "description": "Indicates the exchange rate at the date of the operation. Must be filled in when creating the operation in another currency from the default currency of the accounting system. It this the currency exchange rate agains the accounting folder currency.",
             "default": 1
           },
           "lines": {
@@ -26798,12 +28111,22 @@
             "examples": [
               1
             ]
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "title": "Date",
+            "description": "Date of the objective",
+            "examples": [
+              "2025-01-01"
+            ]
           }
         },
         "type": "object",
         "required": [
           "total",
-          "tax_amount"
+          "tax_amount",
+          "date"
         ],
         "title": "ObjectivesItem"
       },
@@ -27152,6 +28475,7 @@
               "$ref": "#/components/schemas/OrderLineItemIn"
             },
             "type": "array",
+            "minItems": 1,
             "title": "Lines"
           },
           "payment_method": {
@@ -28358,7 +29682,9 @@
             ],
             "title": "First Name",
             "description": "First name of the customer. In case the customer is an individual.",
-            "example": "John"
+            "examples": [
+              "John"
+            ]
           },
           "last_name": {
             "anyOf": [
@@ -28371,7 +29697,9 @@
             ],
             "title": "Last Name",
             "description": "Last name of the customer. In case the customer is an individual.",
-            "example": "Doe"
+            "examples": [
+              "Doe"
+            ]
           },
           "company_name": {
             "anyOf": [
@@ -28384,7 +29712,9 @@
             ],
             "title": "Company Name",
             "description": "Company name of the customer. In case the customer is a company.",
-            "example": "Acme Corp"
+            "examples": [
+              "Acme Corp"
+            ]
           },
           "phone": {
             "anyOf": [
@@ -28397,7 +29727,9 @@
             ],
             "title": "Phone",
             "description": "Phone number of the customer",
-            "example": "+1234567890"
+            "examples": [
+              "+1234567890"
+            ]
           },
           "email": {
             "anyOf": [
@@ -28410,7 +29742,9 @@
             ],
             "title": "Email",
             "description": "Email address of the customer",
-            "example": "john.doe@example.com"
+            "examples": [
+              "john.doe@example.com"
+            ]
           },
           "account_number": {
             "anyOf": [
@@ -28423,7 +29757,9 @@
             ],
             "title": "Account Number",
             "description": "Number of the accounting account used (e.g. 701000)",
-            "example": "701000"
+            "examples": [
+              "701000"
+            ]
           },
           "created_on": {
             "anyOf": [
@@ -28437,7 +29773,9 @@
             ],
             "title": "Created On",
             "description": "Creation date of the customer",
-            "example": "2023-09-25T12:00:00"
+            "examples": [
+              "2023-09-25T12:00:00"
+            ]
           },
           "addresses": {
             "anyOf": [
@@ -28458,8 +29796,7 @@
         "type": "object",
         "required": [
           "id",
-          "source_ref",
-          "account_number"
+          "source_ref"
         ],
         "title": "PMSCustomerItem"
       },
@@ -28485,7 +29822,9 @@
             ],
             "title": "Invoice Number",
             "description": "Number/sequence",
-            "example": "INV-12345"
+            "examples": [
+              "INV-12345"
+            ]
           },
           "creation_date": {
             "anyOf": [
@@ -28499,7 +29838,9 @@
             ],
             "title": "Creation Date",
             "description": "Creation date of the invoice",
-            "example": "2023-10-01T12:00:00"
+            "examples": [
+              "2023-10-01T12:00:00"
+            ]
           },
           "closing_date": {
             "anyOf": [
@@ -28513,7 +29854,9 @@
             ],
             "title": "Closing Date",
             "description": "Closing date of the invoice",
-            "example": "2023-10-10T12:00:00"
+            "examples": [
+              "2023-10-10T12:00:00"
+            ]
           },
           "partners": {
             "anyOf": [
@@ -28573,19 +29916,25 @@
             "type": "number",
             "title": "Tax Amount",
             "description": "Taxes amount",
-            "example": 21.0
+            "examples": [
+              21.0
+            ]
           },
           "untaxed_amount": {
             "type": "number",
             "title": "Untaxed Amount",
             "description": "Untaxed amount",
-            "example": 100.0
+            "examples": [
+              100.0
+            ]
           },
           "total": {
             "type": "number",
             "title": "Total",
             "description": "Total amount incl. taxes",
-            "example": 121.0
+            "examples": [
+              121.0
+            ]
           }
         },
         "type": "object",
@@ -29218,7 +30567,7 @@
             ],
             "title": "Tip",
             "description": "Total amount of the tips of the payment. Tips are not part of the total of the payment",
-            "default": 0,
+            "default": "0",
             "examples": [
               1
             ]
@@ -29336,7 +30685,9 @@
             ],
             "title": "Ledger Account Code",
             "description": "Ledger account code assigned to the category",
-            "example": "4000"
+            "examples": [
+              "4000"
+            ]
           }
         },
         "type": "object",
@@ -29377,7 +30728,9 @@
             ],
             "title": "Label",
             "description": "Label of the tax rate",
-            "example": "VAT 21%"
+            "examples": [
+              "VAT 21%"
+            ]
           },
           "rate": {
             "anyOf": [
@@ -29390,7 +30743,9 @@
             ],
             "title": "Rate",
             "description": "Percentage of the tax rate",
-            "example": 21.0
+            "examples": [
+              21.0
+            ]
           }
         },
         "type": "object",
@@ -29840,7 +31195,8 @@
         "type": "string",
         "enum": [
           "menu",
-          "product"
+          "product",
+          "general_discount"
         ],
         "title": "POSLineItemType"
       },
@@ -30257,7 +31613,7 @@
             ],
             "title": "Tip",
             "description": "Total amount of the tips of the payment. Tips are not part of the total of the payment",
-            "default": 0,
+            "default": "0",
             "examples": [
               1
             ]
@@ -30401,6 +31757,282 @@
           "prices"
         ],
         "title": "POSProductItem"
+      },
+      "Partner": {
+        "properties": {
+          "external_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "External Reference"
+          },
+          "first_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Name",
+            "description": "Only used when the client is an individual (is_company=false). Indicates the first name of the client."
+          },
+          "last_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Name",
+            "description": "Only used when the client is an individual (is_company=false). Indicates the last name of the client."
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "function": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Function",
+            "description": "Only used when the client is an individual (is_company=false). Indicates the function of the client."
+          },
+          "is_company": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Is Company",
+            "description": "Indicates if the client is an individual or a company.",
+            "default": true
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id",
+            "description": "Only used when the client is an individual (is_company=false). Indicates the id of the company linked to the client."
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "mobile": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mobile"
+          },
+          "email": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Email"
+          },
+          "language": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Language",
+            "description": "Format: ISO 639-1 codes."
+          },
+          "internal_notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Notes"
+          },
+          "website": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Website"
+          },
+          "vat": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vat"
+          },
+          "iban": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iban",
+            "description": "IBAN Account number of the client."
+          },
+          "bank_account": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Bank Account",
+            "description": "Bank account number of the client."
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency",
+            "description": "Indicates the currency of the client (e.g. EUR)."
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active",
+            "default": true
+          },
+          "account_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Account Number"
+          },
+          "company_number": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Number"
+          },
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Id"
+          },
+          "last_updated_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated On",
+            "description": "The last time the client has been updated."
+          },
+          "addresses": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/backbone_common__models__common__AddressItemOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addresses",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "Partner"
       },
       "PartnerType": {
         "type": "string",
@@ -30602,8 +32234,7 @@
           "description",
           "amount",
           "currency",
-          "payment_date",
-          "partner_id"
+          "payment_date"
         ],
         "title": "PaymentItemOut"
       },
@@ -30908,6 +32539,18 @@
             ],
             "title": "Credentials",
             "description": "Can be used to specify the credentials of your connection. Must be used in combination with an integrationid and a name. Please use the getIntegrations route to see the available credentials for each integration"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country",
+            "description": "ISO 3166-1 alpha-2 country code to filter connectors by country. Ignored if integrationid is provided."
           }
         },
         "type": "object",
@@ -30915,6 +32558,10 @@
       },
       "PostConnectionItem-Output": {
         "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
           "title": {
             "type": "string",
             "title": "Title"
@@ -30930,6 +32577,7 @@
         },
         "type": "object",
         "required": [
+          "id",
           "title",
           "optional",
           "resource"
@@ -31093,7 +32741,7 @@
               }
             ],
             "title": "Unit",
-            "description": "Unit of measure matching target sofware name"
+            "description": "Unit of measure matching target software name"
           },
           "category": {
             "anyOf": [
@@ -31105,7 +32753,7 @@
               }
             ],
             "title": "Category",
-            "description": "Category matching target sofware name"
+            "description": "Category matching target software name"
           },
           "currency": {
             "anyOf": [
@@ -31117,7 +32765,7 @@
               }
             ],
             "title": "Currency",
-            "description": "Currency matching target sofware name"
+            "description": "Currency matching target software name"
           },
           "description": {
             "anyOf": [
@@ -31130,6 +32778,19 @@
             ],
             "title": "Description",
             "description": "Description"
+          },
+          "cost": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cost",
+            "description": "Cost of the product",
+            "default": 0
           }
         },
         "type": "object",
@@ -31345,7 +33006,7 @@
               }
             ],
             "title": "Unit",
-            "description": "Unit of measure matching target sofware name"
+            "description": "Unit of measure matching target software name"
           },
           "category": {
             "anyOf": [
@@ -31357,7 +33018,7 @@
               }
             ],
             "title": "Category",
-            "description": "Category matching target sofware name"
+            "description": "Category matching target software name"
           },
           "currency": {
             "anyOf": [
@@ -31369,7 +33030,7 @@
               }
             ],
             "title": "Currency",
-            "description": "Currency matching target sofware name"
+            "description": "Currency matching target software name"
           },
           "description": {
             "anyOf": [
@@ -31383,19 +33044,6 @@
             "title": "Description",
             "description": "Description"
           },
-          "available_quantity": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Available Quantity",
-            "description": "Available quanity of the product in stock. Will only be used for products that have an inventory (services will always be 0)",
-            "default": 0
-          },
           "cost": {
             "anyOf": [
               {
@@ -31407,6 +33055,19 @@
             ],
             "title": "Cost",
             "description": "Cost of the product",
+            "default": 0
+          },
+          "available_quantity": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Available Quantity",
+            "description": "Available quanity of the product in stock. Will only be used for products that have an inventory (services will always be 0)",
             "default": 0
           }
         },
@@ -32142,7 +33803,9 @@
             ],
             "title": "Start Date",
             "description": "Start date of the reservation",
-            "example": "2024-10-01T12:00:00"
+            "examples": [
+              "2024-10-01T12:00:00"
+            ]
           },
           "end_date": {
             "anyOf": [
@@ -32156,7 +33819,9 @@
             ],
             "title": "End Date",
             "description": "End date of the reservation",
-            "example": "2024-10-10T12:00:00"
+            "examples": [
+              "2024-10-10T12:00:00"
+            ]
           },
           "creation_date": {
             "anyOf": [
@@ -32170,7 +33835,9 @@
             ],
             "title": "Creation Date",
             "description": "Creation date of the reservation",
-            "example": "2024-09-25T12:00:00"
+            "examples": [
+              "2024-09-25T12:00:00"
+            ]
           },
           "resource_id": {
             "anyOf": [
@@ -32194,7 +33861,9 @@
             ],
             "title": "Resource Name",
             "description": "Name of the resource related to the reservation",
-            "example": "Room 101"
+            "examples": [
+              "Room 101"
+            ]
           },
           "resource_identifier": {
             "anyOf": [
@@ -32207,7 +33876,9 @@
             ],
             "title": "Resource Identifier",
             "description": "Identifier of the resource related to the reservation",
-            "example": "R101"
+            "examples": [
+              "R101"
+            ]
           }
         },
         "type": "object",
@@ -32841,21 +34512,6 @@
             "title": "Active",
             "default": true
           },
-          "addresses": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/backbone_common__models__common__AddressItemOut"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Addresses",
-            "default": []
-          },
           "account_number": {
             "anyOf": [
               {
@@ -32901,6 +34557,21 @@
             ],
             "title": "Last Updated On",
             "description": "The last time the supplier has been updated."
+          },
+          "addresses": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/backbone_common__models__common__AddressItemOut"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Addresses",
+            "default": []
           }
         },
         "type": "object",
@@ -33345,7 +35016,8 @@
           "payment_cancel",
           "fee",
           "fee_cancel",
-          "invoice"
+          "invoice",
+          "internal_move"
         ],
         "title": "TransactionAccountingCategory"
       },
@@ -33368,9 +35040,9 @@
             "$ref": "#/components/schemas/Ref",
             "description": "Technical id in the target software"
           },
-          "total": {
+          "amount": {
             "type": "number",
-            "title": "Total",
+            "title": "Amount",
             "description": "Total amount incl. fee"
           },
           "fee": {
@@ -33430,7 +35102,7 @@
         "required": [
           "id",
           "source_ref",
-          "total",
+          "amount",
           "fee",
           "currency",
           "exchange_rate",
@@ -33792,8 +35464,7 @@
               {
                 "type": "null"
               }
-            ],
-            "default": {}
+            ]
           },
           "unit_of_measure": {
             "anyOf": [
@@ -34957,6 +36628,7 @@
         "enum": [
           "pending",
           "completed",
+          "partially_completed",
           "canceled",
           "failed",
           "unknown",
