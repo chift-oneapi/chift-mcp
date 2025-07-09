@@ -1,8 +1,8 @@
 import textwrap
 
 import chift
-from chift.openapi.openapi import ConsumerItem
 
+from chift.openapi.openapi import ConsumerItem
 from mcp.server import FastMCP
 
 from chift_mcp.config import (
