@@ -1,3 +1,5 @@
+from typing import Literal
+
 import chift
 
 from chift.openapi.models import (
@@ -53,8 +55,8 @@ from chift.openapi.openapi import (
     AnalyticAccountItemOutMultiAnalyticPlans,
     AnalyticAccountItemUpdate,
     AttachmentItem,
-    BackboneCommonModelsInvoicingCommonInvoiceType,
-    BoolParam,
+    BankAccountItemIn,
+    BankAccountItemOut,
     ClientItemIn,
     ClientItemOut,
     ClientItemUpdate,
@@ -62,10 +64,10 @@ from chift.openapi.openapi import (
     CommerceCustomerItem,
     ContactItemIn,
     ContactItemOut,
-    ContactType,
-    DocumentType,
     FinancialEntryItemIn,
+    FinancialEntryItemInOld,
     FinancialEntryItemOut,
+    FinancialEntryItemOutOld,
     GenericJournalEntry,
     InvoiceItemInput,
     InvoiceItemOut,
@@ -83,12 +85,9 @@ from chift.openapi.openapi import (
     MultipleMatchingIn,
     OpportunityItem,
     OrderItemOut,
-    OutstandingType,
     PaymentItemOut,
-    PaymentStatusInput,
     PMSClosureItem,
     PMSCustomerItem,
-    PMSStates,
     POSCreateCustomerItem,
     POSCustomerItem,
     POSOrderItem,
@@ -96,13 +95,34 @@ from chift.openapi.openapi import (
     ProductItemOut,
     ProductItemOutput,
     SalesItem,
-    States,
     SupplierItemIn,
     SupplierItemOut,
     SupplierItemUpdate,
-    TransactionAccountingCategory,
     VariantItem,
 )
+
+ContactType = Literal["prospect", "customer", "supplier", "all"]
+DocumentType = Literal["invoice", "entry"]
+OutstandingType = Literal["client", "supplier"]
+BackboneCommonModelsInvoicingCommonInvoiceType = Literal[
+    "customer_invoice", "customer_refund", "supplier_invoice", "supplier_refund", "all"
+]
+States = Literal["open", "closed", "all"]
+PMSStates = Literal["consumed", "closed"]
+TransactionAccountingCategory = Literal[
+    "all",
+    "unknown",
+    "payout",
+    "payout_cancel",
+    "payment",
+    "payment_cancel",
+    "fee",
+    "fee_cancel",
+    "invoice",
+    "internal_move",
+]
+BoolParam = Literal["true", "false"]
+PaymentStatusInput = Literal["all", "unpaid", "paid"]
 
 
 def accounting_get_analytic_plans(
@@ -395,8 +415,8 @@ def accounting_get_invoice_multi_analytic_plans(
     consumer_id: str,
     invoice_id: str,
     folder_id: str | None = None,
-    include_payments: str | None = BoolParam.false,
-    include_invoice_lines: str | None = BoolParam.false,
+    include_payments: str | None = "false",
+    include_invoice_lines: str | None = "false",
 ) -> InvoiceItemOutMultiAnalyticPlans:
     """Returns a specific invoice with invoice lines including multiple analytic plans
 
@@ -451,7 +471,7 @@ def accounting_get_invoices_by_type(
     date_from: str | None = None,
     date_to: str | None = None,
     updated_after: str | None = None,
-    include_invoice_lines: str | None = BoolParam.false,
+    include_invoice_lines: str | None = "false",
 ) -> list[InvoiceAccounting]:
     """Returns a list of invoices by a specific type (sale/purchase entries)
 
@@ -506,8 +526,8 @@ def accounting_get_invoice(
     consumer_id: str,
     invoice_id: str,
     folder_id: str | None = None,
-    include_payments: str | None = BoolParam.false,
-    include_invoice_lines: str | None = BoolParam.false,
+    include_payments: str | None = "false",
+    include_invoice_lines: str | None = "false",
 ) -> InvoiceItemOut:
     """Returns a specific invoice (sale/purchase entry) with default analytic plan
 
@@ -540,7 +560,7 @@ def accounting_get_invoices_by_type_multi_analytic_plans(
     date_from: str | None = None,
     date_to: str | None = None,
     updated_after: str | None = None,
-    include_invoice_lines: str | None = BoolParam.false,
+    include_invoice_lines: str | None = "false",
 ) -> list[AnalyticAccountMultiPlan]:
     """Returns a list of invoices by type with multiple analytic plans
 
@@ -599,7 +619,7 @@ def accounting_add_invoice_attachment(
     invoice_id: str,
     data: AttachmentItem,
     folder_id: str | None = None,
-    overwrite_existing: str | None = BoolParam.false,
+    overwrite_existing: str | None = "false",
 ) -> bool:
     """Attach a PDF document to an accounting invoice
 
@@ -761,7 +781,7 @@ def accounting_create_generic_journal_entry(
     consumer_id: str,
     data: GenericJournalEntry,
     folder_id: str | None = None,
-    force_currency_exchange: str | None = BoolParam.false,
+    force_currency_exchange: str | None = "false",
 ) -> JournalEntryMultiAnalyticPlan:
     """Create a new Journal Entry in the accounting system
 
@@ -875,6 +895,33 @@ def accounting_get_miscellaneous_operation(
     )
 
 
+def accounting_create_financial_entry(
+    consumer_id: str,
+    data: FinancialEntryItemInOld,
+    folder_id: str | None = None,
+    financial_counterpart_account: str | None = None,
+) -> FinancialEntryItemOutOld:
+    """Create a new financial entry (Bank or Cash operation) - Deprecated
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (FinancialEntryItemInOld): Financial entry data
+        folder_id (str): Optional folder ID for organization
+        financial_counterpart_account (str): Counterpart account for the operation
+
+    Returns:
+        FinancialEntryItemOutOld: The created financial entry
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.FinancialEntry.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "financial_counterpart_account": financial_counterpart_account,
+        },
+    )
+
+
 def accounting_create_financial_entries(
     consumer_id: str,
     data: FinancialEntryItemIn,
@@ -898,6 +945,55 @@ def accounting_create_financial_entries(
         params={
             "folder_id": folder_id,
             "financial_counterpart_account": financial_counterpart_account,
+        },
+    )
+
+
+def accounting_create_bank_account(
+    consumer_id: str,
+    data: BankAccountItemIn,
+    folder_id: str | None = None,
+) -> BankAccountItemOut:
+    """Create a new bank account in the accounting system
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (BankAccountItemIn): Bank account data
+        folder_id (str): Optional folder ID for organization
+
+    Returns:
+        BankAccountItemOut: The created bank account
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.BankAccount.create(data=data, params={"folder_id": folder_id})
+
+
+def accounting_create_invoice_accounting(
+    consumer_id: str,
+    data: InvoiceItemInput,
+    folder_id: str | None = None,
+    force_financial_period: str | None = None,
+    regroup_lines: str | None = "true",
+) -> InvoiceItemOut:
+    """Create a new sale/purchase accounting entry
+
+    Args:
+        consumer_id (str): The consumer ID
+        data (InvoiceItemInput): Invoice data to create
+        folder_id (str): Optional folder ID for organization
+        force_financial_period (str): Force financial period
+        regroup_lines (str): Regroup invoice lines ("true", "false")
+
+    Returns:
+        InvoiceItemOut: The created accounting invoice
+    """
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+    return consumer.accounting.Invoice.create(
+        data=data,
+        params={
+            "folder_id": folder_id,
+            "force_financial_period": force_financial_period,
+            "regroup_lines": regroup_lines,
         },
     )
 
@@ -992,7 +1088,7 @@ def accounting_add_attachment(
     invoice_id: str,
     data: AttachmentItem,
     folder_id: str | None = None,
-    overwrite_existing: str | None = BoolParam.false,
+    overwrite_existing: str | None = "false",
 ) -> bool:
     """Attach a document (PDF) to the invoice entry
 
@@ -1233,7 +1329,7 @@ def pos_get_product_categories(
     consumer_id: str,
     limit: int | None = 50,
     location_id: str | None = None,
-    only_parents: str | None = BoolParam.false,
+    only_parents: str | None = "false",
 ) -> list[POSProductCategory]:
     """Returns a list of product categories
 
@@ -1418,9 +1514,9 @@ def ecommerce_get_orders(
     date_from: str | None = None,
     date_to: str | None = None,
     updated_after: str | None = None,
-    include_detailed_refunds: str | None = BoolParam.false,
-    include_product_categories: str | None = BoolParam.false,
-    include_customer_details: str | None = BoolParam.true,
+    include_detailed_refunds: str | None = "false",
+    include_product_categories: str | None = "false",
+    include_customer_details: str | None = "true",
 ) -> list[CommerceOrder]:
     """Returns a list of all the orders
 
@@ -1453,7 +1549,7 @@ def ecommerce_get_orders(
 
 
 def ecommerce_get_order(
-    consumer_id: str, order_id: str, include_product_categories: str | None = BoolParam.false
+    consumer_id: str, order_id: str, include_product_categories: str | None = "false"
 ) -> OrderItemOut:
     """Returns a specific order
 
@@ -1490,7 +1586,7 @@ def ecommerce_get_payment_methods(
 def ecommerce_get_product_categories(
     consumer_id: str,
     limit: int | None = 50,
-    only_parents: str | None = BoolParam.false,
+    only_parents: str | None = "false",
 ) -> list[CommerceProductCategory]:
     """Returns the list of the product categories
 
@@ -1526,11 +1622,10 @@ def invoicing_get_invoices(
     limit: int | None = 50,
     date_from: str | None = None,
     date_to: str | None = None,
-    invoice_type: BackboneCommonModelsInvoicingCommonInvoiceType
-    | None = BackboneCommonModelsInvoicingCommonInvoiceType.all,
-    payment_status: str | None = PaymentStatusInput.all,
+    invoice_type: BackboneCommonModelsInvoicingCommonInvoiceType | None = "all",
+    payment_status: str | None = "all",
     updated_after: str | None = None,
-    include_invoice_lines: str | None = BoolParam.false,
+    include_invoice_lines: str | None = "false",
 ) -> list[InvoiceAccounting]:
     """Returns a list of invoices
 
@@ -1577,7 +1672,7 @@ def invoicing_create_invoice(consumer_id: str, data: InvoiceItemInput) -> Invoic
 
 
 def invoicing_get_invoice(
-    consumer_id: str, invoice_id: str, include_pdf: str | None = BoolParam.false
+    consumer_id: str, invoice_id: str, include_pdf: str | None = "false"
 ) -> InvoiceItemOutSingle:
     """Returns an invoice
 
@@ -1638,7 +1733,7 @@ def invoicing_get_product(consumer_id: str, product_id: str) -> ProductItemOut:
 def invoicing_get_contacts(
     consumer_id: str,
     limit: int | None = 50,
-    contact_type: ContactType | None = ContactType.all,
+    contact_type: ContactType | None = "all",
 ) -> list[Contact]:
     """Returns a list of all the contacts
 
@@ -1890,7 +1985,7 @@ def payment_get_balances(consumer_id: str, limit: int | None = 50) -> list[Payme
 def payment_get_transaction(
     consumer_id: str,
     limit: int | None = 50,
-    accounting_category: TransactionAccountingCategory | None = TransactionAccountingCategory.all,
+    accounting_category: TransactionAccountingCategory | None = "all",
     starting_from: str | None = None,
     balance_id: str | None = None,
     date_from: str | None = None,
@@ -2055,7 +2150,7 @@ def pms_get_orders(
     date_to: str,
     limit: int | None = 50,
     location_id: str | None = None,
-    state: PMSStates | None = PMSStates.consumed,
+    state: PMSStates | None = "consumed",
 ) -> list[PMSOrder]:
     """Returns a list of the orders.
 
