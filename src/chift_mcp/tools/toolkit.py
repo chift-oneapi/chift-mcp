@@ -122,9 +122,7 @@ def accounting_get_analytic_plans(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.AnalyticPlan.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.AnalyticPlan.all(params=params, limit=limit)
 
 
 def accounting_create_analytic_account_multi_plans(
@@ -167,9 +165,7 @@ def accounting_get_analytic_accounts_multi_plans(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.AnalyticAccountMultiPlan.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.AnalyticAccountMultiPlan.all(params=params, limit=limit)
 
 
 def accounting_get_analytic_account_multi_plans(
@@ -215,7 +211,6 @@ def accounting_update_analytic_account_multi_plans(
     return consumer.accounting.AnalyticAccountMultiPlan.update(
         analytic_account_id, data=data, analytic_plan=analytic_plan, params={"folder_id": folder_id}
     )
-
 
 
 def accounting_create_client(
@@ -268,9 +263,7 @@ def accounting_get_clients(
         params["search"] = search
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.accounting.Client.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Client.all(params=params, limit=limit)
 
 
 def accounting_get_client(
@@ -358,9 +351,7 @@ def accounting_get_suppliers(
         params["search"] = search
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.accounting.Supplier.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Supplier.all(params=params, limit=limit)
 
 
 def accounting_get_supplier(
@@ -449,9 +440,7 @@ def accounting_get_payments_by_invoice(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.Payment.all(
-        invoice_id=invoice_id, params=params, limit=limit
-    )
+    return consumer.accounting.Payment.all(invoice_id=invoice_id, params=params, limit=limit)
 
 
 def accounting_get_invoices_by_type(
@@ -491,9 +480,7 @@ def accounting_get_invoices_by_type(
         params["date_to"] = date_to
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.accounting.Invoice.all(
-        invoice_type=invoice_type, params=params, limit=limit
-    )
+    return consumer.accounting.Invoice.all(invoice_type=invoice_type, params=params, limit=limit)
 
 
 def accounting_create_invoice(
@@ -582,9 +569,7 @@ def accounting_get_invoices_by_type_multi_analytic_plans(
         params["date_to"] = date_to
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.accounting.Invoice.all(
-        invoice_type=invoice_type, params=params, limit=limit
-    )
+    return consumer.accounting.Invoice.all(invoice_type=invoice_type, params=params, limit=limit)
 
 
 def accounting_create_invoice_multiple_plans(
@@ -600,10 +585,13 @@ def accounting_create_invoice_multiple_plans(
         folder_id (str): Optional folder ID for organization
 
     Returns:
-        AnalyticAccountItemOutMultiAnalyticPlans: The created accounting invoice with multi-analytic plans
+        AnalyticAccountItemOutMultiAnalyticPlans:
+        The created accounting invoice with multi-analytic plans
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
-    return consumer.accounting.AnalyticAccountMultiPlan.create(data=data, params={"folder_id": folder_id})
+    return consumer.accounting.AnalyticAccountMultiPlan.create(
+        data=data, params={"folder_id": folder_id}
+    )
 
 
 def accounting_add_invoice_attachment(
@@ -656,9 +644,7 @@ def accounting_get_chart_of_accounts(
         params["folder_id"] = folder_id
     if classes:
         params["classes"] = classes
-    return consumer.accounting.Account.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Account.all(params=params, limit=limit)
 
 
 def accounting_create_ledger_account(
@@ -714,9 +700,7 @@ def accounting_get_accounts_balances(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.Account.all(
-        data=data, params=params, limit=limit
-    )
+    return consumer.accounting.Account.all(data=data, params=params, limit=limit)
 
 
 def accounting_get_journals(
@@ -736,9 +720,7 @@ def accounting_get_journals(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.Journal.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Journal.all(params=params, limit=limit)
 
 
 def accounting_create_journal(
@@ -818,9 +800,7 @@ def accounting_get_vat_codes(
     params = {}
     if folder_id:
         params["folder_id"] = folder_id
-    return consumer.accounting.Tax.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Tax.all(params=params, limit=limit)
 
 
 def accounting_create_miscellaneous_operation(
@@ -873,9 +853,7 @@ def accounting_get_miscellaneous_operations(
         params["date_to"] = date_to
     if journal_ids:
         params["journal_ids"] = journal_ids
-    return consumer.accounting.MiscellaneousOperation.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.MiscellaneousOperation.all(params=params, limit=limit)
 
 
 def accounting_get_miscellaneous_operation(
@@ -895,7 +873,6 @@ def accounting_get_miscellaneous_operation(
     return consumer.accounting.MiscellaneousOperation.get(
         operation_id, params={"folder_id": folder_id}
     )
-
 
 
 def accounting_create_financial_entries(
@@ -987,9 +964,7 @@ def accounting_get_outstandings(
     }
     if folder_id:
         params["folder_id"] = folder_id
-    return consumer.accounting.Outstanding.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Outstanding.all(params=params, limit=limit)
 
 
 def accounting_get_employees(
@@ -1009,9 +984,7 @@ def accounting_get_employees(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.Employee.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Employee.all(params=params, limit=limit)
 
 
 def accounting_add_attachment(
@@ -1067,9 +1040,7 @@ def accounting_get_attachments(
     }
     if folder_id:
         params["folder_id"] = folder_id
-    return consumer.accounting.Attachment.all(
-        params=params, limit=limit
-    )
+    return consumer.accounting.Attachment.all(params=params, limit=limit)
 
 
 def pos_get_customers(
@@ -1099,9 +1070,7 @@ def pos_get_customers(
         params["email"] = email
     if phone:
         params["phone"] = phone
-    return consumer.pos.Customer.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.Customer.all(params=params, limit=limit)
 
 
 def pos_create_customer(consumer_id: str, data: POSCreateCustomerItem) -> POSCustomerItem:
@@ -1167,9 +1136,7 @@ def pos_get_orders(
         params["state"] = state
     if closure_id:
         params["closure_id"] = closure_id
-    return consumer.pos.Order.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.Order.all(params=params, limit=limit)
 
 
 def pos_get_order(consumer_id: str, order_id: str) -> POSOrderItem:
@@ -1205,9 +1172,7 @@ def pos_get_payments(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"date_from": date_from, "date_to": date_to}
-    return consumer.pos.Payment.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.Payment.all(params=params, limit=limit)
 
 
 def pos_get_payment_methods(
@@ -1227,14 +1192,10 @@ def pos_get_payment_methods(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"location_id": location_id} if location_id else {}
-    return consumer.pos.PaymentMethod.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.PaymentMethod.all(params=params, limit=limit)
 
 
-def pos_get_locations(
-    consumer_id: str, limit: int | None = 50
-) -> list[Location]:
+def pos_get_locations(consumer_id: str, limit: int | None = 50) -> list[Location]:
     """Returns the list of locations
 
     Args:
@@ -1289,9 +1250,7 @@ def pos_get_product_categories(
     params = {"only_parents": only_parents}
     if location_id:
         params["location_id"] = location_id
-    return consumer.pos.ProductCategory.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.ProductCategory.all(params=params, limit=limit)
 
 
 def pos_get_accounting_categories(
@@ -1311,9 +1270,7 @@ def pos_get_accounting_categories(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"location_id": location_id} if location_id else {}
-    return consumer.pos.AccountingCategory.all(
-        params=params, limit=limit
-    )
+    return consumer.pos.AccountingCategory.all(params=params, limit=limit)
 
 
 def pos_get_sales(
@@ -1351,9 +1308,7 @@ def pos_get_closure(consumer_id: str, date: str, location_id: str | None = None)
     return consumer.pos.Closure.get(date=date, params={"location_id": location_id})
 
 
-def ecommerce_get_customers(
-    consumer_id: str, limit: int | None = 50
-) -> list[CommerceCustomer]:
+def ecommerce_get_customers(consumer_id: str, limit: int | None = 50) -> list[CommerceCustomer]:
     """Returns a list of all the customers
 
     Args:
@@ -1381,9 +1336,7 @@ def ecommerce_get_customer(consumer_id: str, customer_id: str) -> CommerceCustom
     return consumer.commerce.Customer.get(customer_id)
 
 
-def ecommerce_get_products(
-    consumer_id: str, limit: int | None = 50
-) -> list[CommerceProduct]:
+def ecommerce_get_products(consumer_id: str, limit: int | None = 50) -> list[CommerceProduct]:
     """Returns a list of all the products
 
     Args:
@@ -1445,9 +1398,7 @@ def ecommerce_get_variant(consumer_id: str, variant_id: str) -> VariantItem:
     return consumer.commerce.Variant.get(variant_id)
 
 
-def ecommerce_get_locations(
-    consumer_id: str, limit: int | None = 50
-) -> list[CommerceLocation]:
+def ecommerce_get_locations(consumer_id: str, limit: int | None = 50) -> list[CommerceLocation]:
     """Returns a list of all locations
 
     Args:
@@ -1498,9 +1449,7 @@ def ecommerce_get_orders(
         params["date_to"] = date_to
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.commerce.Order.all(
-        params=params, limit=limit
-    )
+    return consumer.commerce.Order.all(params=params, limit=limit)
 
 
 def ecommerce_get_order(
@@ -1555,14 +1504,10 @@ def ecommerce_get_product_categories(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"only_parents": only_parents}
-    return consumer.commerce.ProductCategory.all(
-        params=params, limit=limit
-    )
+    return consumer.commerce.ProductCategory.all(params=params, limit=limit)
 
 
-def ecommerce_get_taxes(
-    consumer_id: str, limit: int | None = 50
-) -> list[CommerceTax]:
+def ecommerce_get_taxes(consumer_id: str, limit: int | None = 50) -> list[CommerceTax]:
     """Returns the list of all tax rates
 
     Args:
@@ -1614,9 +1559,7 @@ def invoicing_get_invoices(
         params["date_to"] = date_to
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.invoicing.Invoice.all(
-        params=params, limit=limit
-    )
+    return consumer.invoicing.Invoice.all(params=params, limit=limit)
 
 
 def invoicing_create_invoice(consumer_id: str, data: InvoiceItemInput) -> InvoiceItemOut:
@@ -1650,9 +1593,7 @@ def invoicing_get_invoice(
     return consumer.invoicing.Invoice.get(invoice_id, params={"include_pdf": include_pdf})
 
 
-def invoicing_get_products(
-    consumer_id: str, limit: int | None = 50
-) -> list[Product]:
+def invoicing_get_products(consumer_id: str, limit: int | None = 50) -> list[Product]:
     """Returns a list of all the products
 
     Args:
@@ -1711,9 +1652,7 @@ def invoicing_get_contacts(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"contact_type": contact_type}
-    return consumer.invoicing.Contact.all(
-        params=params, limit=limit
-    )
+    return consumer.invoicing.Contact.all(params=params, limit=limit)
 
 
 def invoicing_create_contact(consumer_id: str, data: ContactItemIn) -> ContactItemOut:
@@ -1744,9 +1683,7 @@ def invoicing_get_contact(consumer_id: str, contact_id: str) -> ContactItemOut:
     return consumer.invoicing.Contact.get(contact_id)
 
 
-def invoicing_get_opportunities(
-    consumer_id: str, limit: int | None = 50
-) -> list[Opportunity]:
+def invoicing_get_opportunities(consumer_id: str, limit: int | None = 50) -> list[Opportunity]:
     """Returns a list of all the opportunities
 
     Args:
@@ -1788,9 +1725,7 @@ def invoicing_get_opportunity(consumer_id: str, opportunity_id: str) -> Opportun
     return consumer.invoicing.Opportunity.get(opportunity_id)
 
 
-def invoicing_get_taxes(
-    consumer_id: str, limit: int | None = 50
-) -> list[Tax]:
+def invoicing_get_taxes(consumer_id: str, limit: int | None = 50) -> list[Tax]:
     """Returns a list of all the taxes
 
     Args:
@@ -1841,9 +1776,7 @@ def invoicing_get_payments(
         params["date_from"] = date_from
     if date_to:
         params["date_to"] = date_to
-    return consumer.invoicing.Payment.all(
-        params=params, limit=limit
-    )
+    return consumer.invoicing.Payment.all(params=params, limit=limit)
 
 
 def invoicing_get_payment_methods(
@@ -1940,9 +1873,7 @@ def invoicing_get_custom_item(consumer_id: str, custom_path: str, chift_id: str,
     return consumer.invoicing.Custom.get(custom_path, chift_id, params=params)
 
 
-def payment_get_balances(
-    consumer_id: str, limit: int | None = 50
-) -> list[PaymentBalance]:
+def payment_get_balances(consumer_id: str, limit: int | None = 50) -> list[PaymentBalance]:
     """Returns a list of balances.
 
     Args:
@@ -1989,9 +1920,7 @@ def payment_get_transaction(
         params["date_from"] = date_from
     if date_to:
         params["date_to"] = date_to
-    return consumer.payment.Transaction.all(
-        params=params, limit=limit
-    )
+    return consumer.payment.Transaction.all(params=params, limit=limit)
 
 
 def payment_get_payments(
@@ -2017,9 +1946,7 @@ def payment_get_payments(
         params["date_from"] = date_from
     if date_to:
         params["date_to"] = date_to
-    return consumer.payment.Payment.all(
-        params=params, limit=limit
-    )
+    return consumer.payment.Payment.all(params=params, limit=limit)
 
 
 def payment_get_payment(consumer_id: str, payment_id: str) -> PaymentItemOut:
@@ -2063,9 +1990,7 @@ def payment_get_refunds(
         params["date_from"] = date_from
     if date_to:
         params["date_to"] = date_to
-    return consumer.payment.Refund.all(
-        params=params, limit=limit
-    )
+    return consumer.payment.Refund.all(params=params, limit=limit)
 
 
 def pms_get_payments_methods(
@@ -2085,9 +2010,7 @@ def pms_get_payments_methods(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"location_id": location_id} if location_id else {}
-    return consumer.pms.PaymentMethod.all(
-        params=params, limit=limit
-    )
+    return consumer.pms.PaymentMethod.all(params=params, limit=limit)
 
 
 def pms_get_payments(
@@ -2109,14 +2032,10 @@ def pms_get_payments(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     params = {"date_from": date_from, "date_to": date_to}
-    return consumer.pms.Payment.all(
-        params=params, limit=limit
-    )
+    return consumer.pms.Payment.all(params=params, limit=limit)
 
 
-def pms_get_locations(
-    consumer_id: str, limit: int | None = 50
-) -> list[PMSLocation]:
+def pms_get_locations(consumer_id: str, limit: int | None = 50) -> list[PMSLocation]:
     """Returns a list of the locations.
 
     Args:
@@ -2159,9 +2078,7 @@ def pms_get_orders(
     }
     if location_id:
         params["location_id"] = location_id
-    return consumer.pms.Order.all(
-        params=params, limit=limit
-    )
+    return consumer.pms.Order.all(params=params, limit=limit)
 
 
 def pms_get_closure(consumer_id: str, date: str, location_id: str | None = None) -> PMSClosureItem:
@@ -2221,14 +2138,10 @@ def pms_get_invoices(
     }
     if location_id:
         params["location_id"] = location_id
-    return consumer.pms.Invoice.all(
-        params=params, limit=limit
-    )
+    return consumer.pms.Invoice.all(params=params, limit=limit)
 
 
-def pms_get_customers(
-    consumer_id: str, limit: int | None = 50
-) -> list[PMSCustomer]:
+def pms_get_customers(consumer_id: str, limit: int | None = 50) -> list[PMSCustomer]:
     """Returns a list of all the customers.
 
     Args:
@@ -2256,9 +2169,7 @@ def pms_get_customer(consumer_id: str, customer_id: str) -> PMSCustomerItem:
     return consumer.pms.Customer.get(customer_id)
 
 
-def pms_get_taxes(
-    consumer_id: str, limit: int | None = 50
-) -> list[PMSTax]:
+def pms_get_taxes(consumer_id: str, limit: int | None = 50) -> list[PMSTax]:
     """Returns a list of the tax rates.
 
     Args:
