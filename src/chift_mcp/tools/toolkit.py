@@ -65,9 +65,9 @@ from chift.openapi.openapi import (
     ContactItemIn,
     ContactItemOut,
     FinancialEntryItemIn,
-    FinancialEntryItemInOld,
+    # FinancialEntryItemIn,
     FinancialEntryItemOut,
-    FinancialEntryItemOutOld,
+    # FinancialEntryItemOutOld,
     GenericJournalEntry,
     InvoiceItemInput,
     InvoiceItemOut,
@@ -897,10 +897,10 @@ def accounting_get_miscellaneous_operation(
 
 def accounting_create_financial_entry(
     consumer_id: str,
-    data: FinancialEntryItemInOld,
+    data: FinancialEntryItemOut,
     folder_id: str | None = None,
     financial_counterpart_account: str | None = None,
-) -> FinancialEntryItemOutOld:
+) -> FinancialEntryItemOut:
     """Create a new financial entry (Bank or Cash operation) - Deprecated
 
     Args:

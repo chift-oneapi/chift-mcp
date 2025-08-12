@@ -1,18 +1,18 @@
 [project]
 name = "chift-mcp-server"
-version = "0.1.3"
+version = "0.1.4"
 description = "MCP Server to interact with Chift API via Chift Python SDK"
 authors = [{ name = "Dima Redchyts", email = "dima.redchyts@chift.eu" }]
 requires-python = ">=3.11,<4.0"
 readme = "README.md"
 license = "MIT"
 dependencies = [
-    "mcp[cli]>=1.10.1",
-    "chift>=0.3.3",
+    "mcp[cli]==1.12.4",
+    "chift==0.3.10",
     "pydantic-config>=0.3.0",
     "loguru>=0.7.3",
     "inflect>=7.5.0",
-    "pydantic>=2.11.7"
+    "pydantic>=2.11.7",
 ]
 
 [project.scripts]
