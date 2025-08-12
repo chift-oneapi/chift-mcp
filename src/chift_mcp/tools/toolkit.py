@@ -1401,7 +1401,7 @@ def pos_get_closure(consumer_id: str, date: str, location_id: str | None = None)
         ClosureItem: Closure status information
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
-    return consumer.pos.Closure.get(date=date, params={"location_id": location_id})
+    return consumer.pos.Closure.get(date, params={"location_id": location_id})
 
 
 def ecommerce_get_customers(consumer_id: str, limit: int | None = 50) -> list[CommerceCustomer]:
@@ -2188,7 +2188,7 @@ def pms_get_closure(consumer_id: str, date: str, location_id: str | None = None)
         PMSClosureItem: Closure status information
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
-    return consumer.pms.Closure.get(date=date, params={"location_id": location_id})
+    return consumer.pms.Closure.get(date, params={"location_id": location_id})
 
 
 def pms_get_accounting_categories(
