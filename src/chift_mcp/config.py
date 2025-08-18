@@ -1,3 +1,4 @@
+from pydantic import Field
 from pydantic_settings import (
     BaseSettings,
     SettingsConfigDict,
@@ -10,11 +11,12 @@ class Chift(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env", env_file_encoding="utf-8", env_prefix="CHIFT_", extra="ignore"
     )
-    client_secret: str
-    client_id: str
-    account_id: str
-    function_config: dict | None = DEFAULT_CONFIG
+    client_secret: str = Field(default=...)
+    client_id: str = Field(default=...)
+    account_id: str = Field(default=...)
+    function_config: dict[str, list[str]] = DEFAULT_CONFIG
     url_base: str | None = "https://api.chift.eu"
+    consumer_id: str | None = None
 
 
 class Config:

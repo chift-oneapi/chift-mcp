@@ -53,11 +53,11 @@ def create_mcp_server(name: str) -> FastMCP:
     return mcp
 
 
-def register_tools(mcp: FastMCP):
+def register_consumer_tools(mcp: FastMCP):
     """Register MCP tools for consumers and connections."""
 
     @mcp.tool()
-    def consumers() -> list[ConsumerItem]:
+    def consumers():
         """Get list of available consumers."""
         return chift.Consumer.all()
 
@@ -72,12 +72,17 @@ def register_tools(mcp: FastMCP):
         consumer = chift.Consumer.get(chift_id=consumer_id)
         return consumer.Connection.all()
 
+    return [consumers, get_consumer, consumer_connections]
+
 
 def main() -> None:
     configure_chift(config.chift)
     mcp = create_mcp_server("Chift API Bridge")
-    register_tools(mcp)
-    import_toolkit_functions(config=config.chift.function_config, mcp=mcp)
+    if not config.chift.consumer_id:
+        register_consumer_tools(mcp)
+    import_toolkit_functions(
+        config=config.chift.function_config, mcp=mcp, consumer_id=config.chift.consumer_id
+    )
     mcp.run()
 
 

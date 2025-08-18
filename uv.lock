@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.11, <4.0"
 
 [[package]]
@@ -98,20 +98,20 @@ wheels = [
 
 [[package]]
 name = "chift"
-version = "0.3.10"
+version = "0.3.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/dd/a3/5ebb1ef3360a0e03677663ed056fa195a832fef5defdaac01d69e1424895/chift-0.3.10.tar.gz", hash = "sha256:a757b152f39fe06607e50ec2e031e76ff0c3922154e34eea4d1460606d467830", size = 104429, upload-time = "2025-08-08T18:55:56.274Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/fc/85/cfe992532515eda5ac75b8df83e7e7dc1b7cd6b7b635208c33caedd895a2/chift-0.3.11.tar.gz", hash = "sha256:9009060ba24e7d91dcce69846054788f93c28103a2646495f0398e23e8a27387", size = 102247, upload-time = "2025-08-13T10:34:44.375Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/17/5b/94840884398f5ca21812d194818146fd37b1c88e841ad38a5cd21fcd16ca/chift-0.3.10-py3-none-any.whl", hash = "sha256:81722302799ce032b27f3f9a7e1b4dbdc657f5b8a834a4778aa932b021e58828", size = 117406, upload-time = "2025-08-08T18:55:54.725Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/31/c8595b187df37d727b3470724925c4b9c0189a49d2d3e69de0be8b395780/chift-0.3.11-py3-none-any.whl", hash = "sha256:ae7d30cea0ed837b92413b85a4ab263af35b769441b673f013fd94802a34ced5", size = 114098, upload-time = "2025-08-13T10:34:43.087Z" },
 ]
 
 [[package]]
 name = "chift-mcp-server"
-version = "0.1.3"
+version = "0.1.4"
 source = { editable = "." }
 dependencies = [
     { name = "chift" },
@@ -131,7 +131,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "chift", specifier = "==0.3.10" },
+    { name = "chift", specifier = "==0.3.11" },
     { name = "inflect", specifier = ">=7.5.0" },
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "mcp", extras = ["cli"], specifier = "==1.12.4" },

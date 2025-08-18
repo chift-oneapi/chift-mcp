@@ -4,6 +4,7 @@ import chift
 
 from chift.openapi.models import (
     Account,
+    AccountBalance,
     AnalyticAccountMultiPlan,
     AnalyticPlan,
     Attachment,
@@ -18,11 +19,15 @@ from chift.openapi.models import (
     Contact,
     Customer as POSCustomer,
     Employee,
+    Invoice,
     InvoiceAccounting,
+    InvoiceMultiPlanAccounting,
     InvoicingPayment,
     InvoicingPaymentMethod,
+    Journal,
     Location,
     MiscellaneousOperation,
+    MultipleMatching,
     Opportunity,
     Order,
     Outstanding,
@@ -44,6 +49,7 @@ from chift.openapi.models import (
     POSProduct,
     POSProductCategory,
     Product,
+    Sales,
     Supplier,
     Tax,
     TaxAccounting,
@@ -70,11 +76,9 @@ from chift.openapi.openapi import (
     # FinancialEntryItemOutOld,
     GenericJournalEntry,
     InvoiceItemInput,
-    InvoiceItemOut,
     InvoiceItemOutMultiAnalyticPlans,
     InvoiceItemOutSingle,
     InvoicingVatCode,
-    Journal,
     JournalEntryMultiAnalyticPlan,
     JournalIn,
     LedgerAccountItemIn,
@@ -94,7 +98,6 @@ from chift.openapi.openapi import (
     ProductItemInput,
     ProductItemOut,
     ProductItemOutput,
-    SalesItem,
     SupplierItemIn,
     SupplierItemOut,
     SupplierItemUpdate,
@@ -190,7 +193,7 @@ def accounting_get_analytic_accounts_multi_plans(
 
 def accounting_get_analytic_account_multi_plans(
     consumer_id: str, analytic_account_id: str, analytic_plan: str, folder_id: str | None = None
-) -> AnalyticAccountItemOutMultiAnalyticPlans:
+) -> AnalyticAccountMultiPlan:
     """Returns one specific analytic account of a specific analytic plan
 
     Args:
@@ -431,7 +434,7 @@ def accounting_get_invoice_multi_analytic_plans(
         InvoiceItemOutMultiAnalyticPlans: The requested invoice with multi-analytic plan details
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
-    return consumer.accounting.Invoice.get(
+    return consumer.accounting.InvoiceMultiPlan.get(
         invoice_id,
         params={
             "folder_id": folder_id,
@@ -507,7 +510,7 @@ def accounting_create_invoice(
     consumer_id: str,
     data: InvoiceItemInput,
     folder_id: str | None = None,
-) -> InvoiceItemOut:
+) -> InvoiceAccounting:
     """Create a new sale/purchase accounting entry
 
     Args:
@@ -528,7 +531,7 @@ def accounting_get_invoice(
     folder_id: str | None = None,
     include_payments: str | None = "false",
     include_invoice_lines: str | None = "false",
-) -> InvoiceItemOut:
+) -> InvoiceAccounting:
     """Returns a specific invoice (sale/purchase entry) with default analytic plan
 
     Args:
@@ -561,7 +564,7 @@ def accounting_get_invoices_by_type_multi_analytic_plans(
     date_to: str | None = None,
     updated_after: str | None = None,
     include_invoice_lines: str | None = "false",
-) -> list[AnalyticAccountMultiPlan]:
+) -> list[InvoiceMultiPlanAccounting]:
     """Returns a list of invoices by type with multiple analytic plans
 
     Args:
@@ -589,12 +592,15 @@ def accounting_get_invoices_by_type_multi_analytic_plans(
         params["date_to"] = date_to
     if updated_after:
         params["updated_after"] = updated_after
-    return consumer.accounting.Invoice.all(invoice_type=invoice_type, params=params, limit=limit)
+    return consumer.accounting.InvoiceMultiPlan.all(
+        invoice_type=invoice_type, params=params, limit=limit
+    )
 
 
 def accounting_create_invoice_multiple_plans(
     consumer_id: str,
     data: InvoiceItemInput,
+    analytic_plan: str,
     folder_id: str | None = None,
 ) -> AnalyticAccountItemOutMultiAnalyticPlans:
     """Create a new sale/purchase entry with multiple analytic plans
@@ -602,6 +608,7 @@ def accounting_create_invoice_multiple_plans(
     Args:
         consumer_id (str): The consumer ID
         data (InvoiceItemInput): Invoice data to create
+        analytic_plan (str): The analytic plan to use for the invoice
         folder_id (str): Optional folder ID for organization
 
     Returns:
@@ -610,7 +617,9 @@ def accounting_create_invoice_multiple_plans(
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
     return consumer.accounting.AnalyticAccountMultiPlan.create(
-        data=data, params={"folder_id": folder_id}
+        data=data,
+        analytic_plan=analytic_plan,
+        params={"folder_id": folder_id},
     )
 
 
@@ -620,7 +629,7 @@ def accounting_add_invoice_attachment(
     data: AttachmentItem,
     folder_id: str | None = None,
     overwrite_existing: str | None = "false",
-) -> bool:
+) -> str:
     """Attach a PDF document to an accounting invoice
 
     Args:
@@ -701,12 +710,12 @@ def accounting_get_account(
     return consumer.accounting.Account.get(account_id, params={"folder_id": folder_id})
 
 
-def accounting_get_accounts_balances(
+def accounting_get_accounts_balances(  # TODO Still has mistakes
     consumer_id: str,
     data: AccountBalanceFilter,
     limit: int | None = 50,
     folder_id: str | None = None,
-) -> list[Account]:
+) -> list[AccountBalance]:
     """Get the balance of accounts in the accounting plan between specific months
 
     Args:
@@ -719,8 +728,12 @@ def accounting_get_accounts_balances(
         list[Account]: List of account balances
     """
     consumer = chift.Consumer.get(chift_id=consumer_id)
-    params = {"folder_id": folder_id} if folder_id else {}
-    return consumer.accounting.Account.all(data=data, params=params, limit=limit)
+    params: dict[str, str | int] = {}
+    if folder_id is not None:
+        params["folder_id"] = folder_id
+    if limit is not None:
+        params["size"] = limit
+    return consumer.accounting.Balance.create(data=data, params=params, map_model=False)
 
 
 def accounting_get_journals(
@@ -974,7 +987,7 @@ def accounting_create_invoice_accounting(
     folder_id: str | None = None,
     force_financial_period: str | None = None,
     regroup_lines: str | None = "true",
-) -> InvoiceItemOut:
+) -> InvoiceAccounting:
     """Create a new sale/purchase accounting entry
 
     Args:
@@ -1017,7 +1030,7 @@ def accounting_match_entries(
 
 def accounting_match_entries_multiple(
     consumer_id: str, data: MultipleMatchingIn, folder_id: str | None = None
-) -> list:
+) -> list[MultipleMatching]:
     """Match multiple existing entries in the accounting system
 
     Args:
@@ -1083,31 +1096,31 @@ def accounting_get_employees(
     return consumer.accounting.Employee.all(params=params, limit=limit)
 
 
-def accounting_add_attachment(
-    consumer_id: str,
-    invoice_id: str,
-    data: AttachmentItem,
-    folder_id: str | None = None,
-    overwrite_existing: str | None = "false",
-) -> bool:
-    """Attach a document (PDF) to the invoice entry
+# def accounting_add_attachment( # Not useful for AI
+#     consumer_id: str,
+#     invoice_id: str,
+#     data: AttachmentItem,
+#     folder_id: str | None = None,
+#     overwrite_existing: str | None = "false",
+# ) -> Matching:
+#     """Attach a document (PDF) to the invoice entry
 
-    Args:
-        consumer_id (str): The consumer ID
-        invoice_id (str): Unique identifier of the invoice
-        data (AttachmentItem): Attachment data with base64 string
-        folder_id (str): Optional folder ID for context
-        overwrite_existing (str): Overwrite existing attachment if exists ("true", "false")
+#     Args:
+#         consumer_id (str): The consumer ID
+#         invoice_id (str): Unique identifier of the invoice
+#         data (AttachmentItem): Attachment data with base64 string
+#         folder_id (str): Optional folder ID for context
+#         overwrite_existing (str): Overwrite existing attachment if exists ("true", "false")
 
-    Returns:
-        bool: True if attachment was successfully added
-    """
-    consumer = chift.Consumer.get(chift_id=consumer_id)
-    return consumer.accounting.Attachment.create(
-        invoice_id,
-        data=data,
-        params={"folder_id": folder_id, "overwrite_existing": overwrite_existing},
-    )
+#     Returns:
+#         bool: True if attachment was successfully added
+#     """
+#     consumer = chift.Consumer.get(chift_id=consumer_id)
+#     return consumer.accounting.Attachment.create(
+#         invoice_id,
+#         data=data,
+#         params={"folder_id": folder_id, "overwrite_existing": overwrite_existing},
+#     )
 
 
 def accounting_get_attachments(
@@ -1371,7 +1384,7 @@ def pos_get_accounting_categories(
 
 def pos_get_sales(
     consumer_id: str, date_from: str, date_to: str, location_id: str | None = None
-) -> SalesItem:
+) -> list[Sales]:
     """Returns the summary of the sales
 
     Args:
@@ -1626,7 +1639,7 @@ def invoicing_get_invoices(
     payment_status: str | None = "all",
     updated_after: str | None = None,
     include_invoice_lines: str | None = "false",
-) -> list[InvoiceAccounting]:
+) -> list[Invoice]:
     """Returns a list of invoices
 
     Args:
@@ -1657,7 +1670,7 @@ def invoicing_get_invoices(
     return consumer.invoicing.Invoice.all(params=params, limit=limit)
 
 
-def invoicing_create_invoice(consumer_id: str, data: InvoiceItemInput) -> InvoiceItemOut:
+def invoicing_create_invoice(consumer_id: str, data: InvoiceItemInput) -> Invoice:
     """Create a new invoice
 
     Args:

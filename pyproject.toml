@@ -8,7 +8,7 @@ readme = "README.md"
 license = "MIT"
 dependencies = [
     "mcp[cli]==1.12.4",
-    "chift==0.3.10",
+    "chift==0.3.11",
     "pydantic-config>=0.3.0",
     "loguru>=0.7.3",
     "inflect>=7.5.0",

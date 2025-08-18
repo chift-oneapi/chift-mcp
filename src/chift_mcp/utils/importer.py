@@ -1,17 +1,41 @@
 import importlib.util
+import inspect
 import os
 import sys
+
+from collections.abc import Callable
+from functools import wraps
+
+import chift
 
 from loguru import logger
 from mcp.server import FastMCP
 
-from chift_mcp.constants import (
-    CHIFT_DOMAINS,
-    CHIFT_OPERATION_TYPES,
-)
+from chift_mcp.constants import CHIFT_DOMAINS, CHIFT_OPERATION_TYPES
+from chift_mcp.utils.utils import CONNECTION_TYPES
 
 
-def validate_config(function_config: dict) -> dict:
+def get_connection_types(consumer_id: str | None = None) -> list[str]:
+    """
+    Get the connection types for a consumer.
+
+    Args:
+        consumer_id (str): The consumer ID
+
+    Returns:
+        list[str]: The connection types
+    """
+    if consumer_id is None:
+        return list(CONNECTION_TYPES.values())
+
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+
+    connections = consumer.Connection.all()
+
+    return [CONNECTION_TYPES[connection.api] for connection in connections]
+
+
+def validate_config(function_config: dict[str, list[str]]) -> dict[str, list[str]]:
     """
     Validates and deduplicates Chift domain operation configuration.
 
@@ -66,7 +90,60 @@ def validate_config(function_config: dict) -> dict:
     return result_config
 
 
-def import_toolkit_functions(config: dict, mcp: FastMCP) -> None:
+def create_wrapper_without_consumer_id(func: Callable, consumer_id: str) -> Callable:
+    """
+    Creates a wrapper function that removes consumer_id parameter and injects it automatically.
+
+    Args:
+        func: The original function that has consumer_id as first parameter
+        consumer_id: The consumer_id value to inject
+
+    Returns:
+        Wrapped function without consumer_id parameter
+    """
+    # Get the original function signature
+    sig = inspect.signature(func)
+    params = list(sig.parameters.values())
+
+    # Check if consumer_id is the first parameter
+    if not params or params[0].name != "consumer_id":
+        return func  # Return original if consumer_id is not the first parameter
+
+    # Create new parameters list without consumer_id
+    new_params = params[1:]  # Skip the first parameter (consumer_id)
+    new_sig = sig.replace(parameters=new_params)
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        # Inject consumer_id as the first argument
+        return func(consumer_id, *args, **kwargs)
+
+    # Update the wrapper's signature
+    setattr(wrapper, "__signature__", new_sig)  # noqa: B010
+
+    # Update docstring to reflect the parameter change
+    if func.__doc__:
+        lines = func.__doc__.split("\n")
+        new_lines = []
+        i = 0
+
+        while i < len(lines):
+            line = lines[i]
+            # Skip the consumer_id parameter documentation
+            if "consumer_id (str): The consumer ID" in line:
+                # Skip this line and continue until we find the next parameter or section
+                i += 1
+                continue
+            else:
+                new_lines.append(line)
+            i += 1
+
+        wrapper.__doc__ = "\n".join(new_lines)
+
+    return wrapper
+
+
+def import_toolkit_functions(config: dict, mcp: FastMCP, consumer_id: str | None = None) -> None:
     # Validate configuration
     config = validate_config(config)
 
@@ -92,9 +169,19 @@ def import_toolkit_functions(config: dict, mcp: FastMCP) -> None:
 
     # Load module
     spec = importlib.util.spec_from_file_location("chift_mcp.tools.toolkit", file_path)
+    if not spec:
+        raise ImportError(f"Failed to load module from {file_path}")
+
     module = importlib.util.module_from_spec(spec)
+    if not module:
+        raise ImportError(f"Failed to load module from {file_path}")
+
     sys.modules["chift_mcp.tools.toolkit"] = module
+    if not spec.loader:
+        raise ImportError(f"Failed to load module from {file_path}")
     spec.loader.exec_module(module)
+
+    connection_types = get_connection_types(consumer_id)
 
     # Get all functions from module that match configuration
     matching_functions = {}
@@ -106,16 +193,29 @@ def import_toolkit_functions(config: dict, mcp: FastMCP) -> None:
             if len(parts) >= 2:  # Need at least domain and operation
                 domain, operation = parts[0], parts[1]
 
+                if (
+                    domain not in connection_types
+                ):  # Check if domain is supported for the consumer, never skips if consumer_id is None  # noqa: E501
+                    continue
+
                 # Check if domain and operation are in config
                 if domain in config and operation in config[domain]:
-                    matching_functions[name] = obj
+                    # Apply wrapper if consumer_id is provided and function has consumer_id param
+                    tool_func = obj
+                    if consumer_id:
+                        sig = inspect.signature(obj)
+                        params = list(sig.parameters.values())
+                        if params and params[0].name == "consumer_id":
+                            tool_func = create_wrapper_without_consumer_id(obj, consumer_id)
+
+                    matching_functions[name] = tool_func
 
                     # Get function docstring as description
-                    description = obj.__doc__.strip() if obj.__doc__ else None
+                    description = tool_func.__doc__.strip() if tool_func.__doc__ else None
 
                     # Register as tool
                     try:
-                        mcp.add_tool(obj, name=name, description=description)
+                        mcp.add_tool(tool_func, name=name, description=description)
                     except Exception as e:
                         logger.error(f"Error registering tool {name}: {e}")
 

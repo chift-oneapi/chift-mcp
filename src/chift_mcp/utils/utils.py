@@ -94,3 +94,15 @@ def map_connections_to_modules(connections: list[Connection]) -> set[str]:
         if connection.api not in modules:
             modules.append(f"chift.models.consumers.{connection.api.lower()}")
     return set(modules)
+
+
+CONNECTION_TYPES = {
+    "Accounting": "accounting",
+    "Point of Sale": "pos",
+    "eCommerce": "ecommerce",
+    "Invoicing": "invoicing",
+    "Banking": "banking",
+    "Payment": "payment",
+    "Property Management System": "pms",
+    "Custom": "custom",
+}
