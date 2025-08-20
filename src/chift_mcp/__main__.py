@@ -1,18 +1,26 @@
-import textwrap
+import asyncio
 
 import chift
 
-from chift.openapi.openapi import ConsumerItem
-from mcp.server import FastMCP
+from fastmcp import FastMCP
+from fastmcp.utilities.logging import get_logger
+from httpx import get
 
 from chift_mcp.config import (
-    Chift as ChiftConfig,
     config,
 )
-from chift_mcp.utils.importer import import_toolkit_functions
+from chift_mcp.http_client import get_http_client
+from chift_mcp.prompts import add_prompts
+from chift_mcp.route_maps import get_route_maps
+from chift_mcp.tools import customize_tools, register_consumer_tools
+from chift_mcp.utils.parse_openapi_deps import resolve_openapi_refs
+from chift_mcp.utils.utils import get_connection_types
+
+base_url = config.chift.url_base
+logger = get_logger(__name__)
 
 
-def configure_chift(chift_config: ChiftConfig) -> None:
+def configure_chift(chift_config) -> None:
     """Configure global Chift client settings."""
     chift.client_secret = chift_config.client_secret
     chift.client_id = chift_config.client_id
@@ -20,71 +28,46 @@ def configure_chift(chift_config: ChiftConfig) -> None:
     chift.url_base = chift_config.url_base
 
 
-def create_mcp_server(name: str) -> FastMCP:
-    """Initialize and configure the MCP server with prompt."""
-    mcp = FastMCP(name)
+async def get_mcp(name: str = "Chift API Bridge"):
+    if not base_url:
+        raise ValueError("Chift URL base is not set")
 
-    @mcp.prompt()
-    def initial_prompt() -> str:
-        return textwrap.dedent(
-            """
-                        You are an AI assistant for the Chift API using MCP server tools.
-            
-                        1. First, use the 'consumers' tool to get available consumers.
-                        2. Display this list and REQUIRE explicit selection:
-                           - Specific consumer ID(s)/name(s)
-                           - OR explicit confirmation to use ALL consumers
-                           - DO NOT proceed without clear selection
-                        3. For each selected consumer, use 'get_consumer' for details.
-                        4. Use 'consumer_connections' to get available endpoints.
-                        5. Only use endpoints available for the selected consumer(s).
-                        6. Format responses as:
-            
-                        <response>
-                        Your response to the user.
-                        </response>
-            
-                        <api_interaction>
-                        API call details and results.
-                        </api_interaction>
-                    """
-        )
+    tags_to_exclude = ["consumers", "connections"]
+    route_maps = get_route_maps(tags_to_exclude)
+
+    client = get_http_client(
+        client_id=config.chift.client_id,
+        client_secret=config.chift.client_secret,
+        account_id=config.chift.account_id,
+        base_url=base_url,
+    )
+
+    configure_chift(config.chift)
+    consumer_id = config.chift.consumer_id
+    connection_types = get_connection_types(config.chift.consumer_id)
+
+    openapi_spec = get(f"{base_url}/openapi.json").json()
+    openapi_spec = resolve_openapi_refs(openapi_spec)
+    mcp = FastMCP.from_openapi(
+        openapi_spec=openapi_spec,
+        client=client,
+        name=name,
+        # mcp_component_fn=customize_components,
+        route_maps=route_maps,
+        include_tags=set(connection_types),
+    )
+
+    add_prompts(mcp)
+    if not consumer_id:
+        register_consumer_tools(mcp)
+
+    await customize_tools(mcp, consumer_id)
 
     return mcp
 
-
-def register_consumer_tools(mcp: FastMCP):
-    """Register MCP tools for consumers and connections."""
-
-    @mcp.tool()
-    def consumers():
-        """Get list of available consumers."""
-        return chift.Consumer.all()
-
-    @mcp.tool()
-    def get_consumer(consumer_id: str) -> ConsumerItem:
-        """Get specific consumer by ID."""
-        return chift.Consumer.get(chift_id=consumer_id)
-
-    @mcp.tool()
-    def consumer_connections(consumer_id: str):
-        """Get list of connections for a specific consumer."""
-        consumer = chift.Consumer.get(chift_id=consumer_id)
-        return consumer.Connection.all()
-
-    return [consumers, get_consumer, consumer_connections]
-
-
-def main() -> None:
-    configure_chift(config.chift)
-    mcp = create_mcp_server("Chift API Bridge")
-    if not config.chift.consumer_id:
-        register_consumer_tools(mcp)
-    import_toolkit_functions(
-        config=config.chift.function_config, mcp=mcp, consumer_id=config.chift.consumer_id
-    )
-    mcp.run()
-
+async def main():
+    mcp = await get_mcp()
+    await mcp.run_async()
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

@@ -1,0 +1,10 @@
+{
+  "$schema": "https://gofastmcp.com/schemas/fastmcp_config/v1.json",
+  "entrypoint": {
+    "file": "src/chift_mcp/main.py",
+    "object": "get_mcp"
+  },
+  "environment": {
+    "dependencies": ["chift"]
+  }
+}

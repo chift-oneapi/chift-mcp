@@ -1,5 +1,7 @@
 from typing import Any
 
+import chift
+
 from chift.openapi.models import (
     Connection,
     Consumer,
@@ -94,6 +96,26 @@ def map_connections_to_modules(connections: list[Connection]) -> set[str]:
         if connection.api not in modules:
             modules.append(f"chift.models.consumers.{connection.api.lower()}")
     return set(modules)
+
+
+def get_connection_types(consumer_id: str | None = None) -> list[str]:
+    """
+    Get the connection types for a consumer.
+
+    Args:
+        consumer_id (str): The consumer ID
+
+    Returns:
+        list[str]: The connection types
+    """
+    if consumer_id is None:
+        return list(CONNECTION_TYPES.values())
+
+    consumer = chift.Consumer.get(chift_id=consumer_id)
+
+    connections = consumer.Connection.all()
+
+    return [CONNECTION_TYPES[connection.api] for connection in connections]
 
 
 CONNECTION_TYPES = {
