@@ -13,6 +13,7 @@ dependencies = [
     "loguru>=0.7.3",
     "inflect>=7.5.0",
     "pydantic>=2.11.7",
+    "fastmcp>=2.11.3",
 ]
 
 [project.scripts]
@@ -21,6 +22,7 @@ chift-mcp-server = "chift_mcp.__main__:main"
 [dependency-groups]
 dev = [
     "pytest",
+    "pytest-asyncio",
     "ruff>=0.3.4",
     "poethepoet>=0.24.0"
 ]
@@ -67,6 +69,13 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 docstring-code-format = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 
 [build-system]
 requires = ["hatchling"]
