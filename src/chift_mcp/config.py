@@ -12,12 +12,6 @@ class Chift(BaseSettings):
     client_secret: str = Field(default=...)
     client_id: str = Field(default=...)
     account_id: str = Field(default=...)
-    url_base: str | None = "https://api.chift.eu"
+    url_base: str = "https://api.chift.eu"
     consumer_id: str | None = None
-
-
-class Config:
-    chift = Chift()
-
-
-config: Config = Config()
+    is_remote: bool = Field(default=False)

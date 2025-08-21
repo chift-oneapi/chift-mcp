@@ -1,23 +1,54 @@
-from typing import Annotated
+from typing import Annotated, Any
 
 import chift
 
 from fastmcp import FastMCP
+from fastmcp.server.dependencies import get_context
 from fastmcp.tools import Tool
 from fastmcp.tools.tool_transform import ArgTransform, forward
 from fastmcp.utilities.logging import get_logger
-from fastmcp.utilities.types import NotSet
 from pydantic import Field
+
+from chift_mcp.utils.tool_factory import ToolFactory
 
 logger = get_logger(__name__)
 
-class ToolCustomizer:
-    def __init__(self, tool: Tool, consumer_id: str | None = None):
+
+class HideConsumerIdToolFactory(ToolFactory):
+    def __init__(self):
+        self.consumer_id = None
+
+    async def transform_fn(self, **kwargs):
+        self.consumer_id = get_context().get_state("consumer_id")
+        return await forward(**kwargs)
+
+    def _customize_tool(self, tool: Tool) -> Tool | None:
+        return tool.from_tool(
+            tool=tool,
+            transform_args={
+                "consumer_id": ArgTransform(hide=True, default_factory=lambda: self.consumer_id)
+            },
+            transform_fn=self.transform_fn,
+        )
+
+
+class PaginationToolFactory(ToolFactory):
+    def __init__(self):
         self.page = 1
         self.size = 100
         self.count = 0
-        self.tool = tool
-        self.consumer_id = consumer_id
+
+    async def transform_fn(
+        self,
+        limit: Annotated[
+            int, Field(ge=1, le=100, description="The number of items to return")
+        ] = 50,
+        **kwargs,
+    ):
+        all_items = []
+        async for page in self._iter_pages(limit=limit, **kwargs):
+            all_items.extend(page)
+        return all_items
 
     async def _iter_pages(self, limit: int, **kwargs):
         self.size = limit if limit and limit < 100 else 100
@@ -35,54 +66,37 @@ class ToolCustomizer:
                 if (self.count >= self.total or not items) or (limit and self.count >= limit):
                     break
 
-    async def pagination_response(
-        self,
-        limit: Annotated[
-            int, Field(ge=1, le=100, description="The number of items to return")
-        ] = 50,
-        **kwargs,
-    ):
-        all_items = []
-        async for page in self._iter_pages(limit=limit, **kwargs):
-            all_items.extend(page)
-        return all_items
+    def _convert_output_schema(self, output_schema: dict[str, Any] | None):
+        if not output_schema:
+            return None
 
-    def get_arg_transform(self):
-        return {
-            "page": ArgTransform(hide=True, default_factory=lambda: self.page),
-            "size": ArgTransform(hide=True, default_factory=lambda: self.size),
+        properties = output_schema.get("properties", {})
+        items = properties.get("items", {})
+        defs = output_schema.get("$defs", {})
+        if not items:
+            raise ValueError("Cannot build the new output schema.")
+
+        new_schema = {
+            "type": "object",
+            "properties": {"result": items},
+            "required": ["result"],
+            "x-fastmcp-wrap-result": True,
         }
 
-    def customize_tool(self):
-        properties = self.tool.parameters.get("properties", {})
-        original_output_schema = self.tool.output_schema
+        if defs:
+            new_schema["$defs"] = defs
+        return new_schema
 
-        transform_args: dict[str, ArgTransform] = {}
-        should_paginate = False
-        output_schema = None
-        change_consumer_id = False
-
-        if self.consumer_id and "consumer_id" in properties:
-            change_consumer_id = True
-            transform_args["consumer_id"] = ArgTransform(hide=True, default=self.consumer_id)
-
-        if "page" in properties and "size" in properties:
-            transform_args.update(self.get_arg_transform())
-            should_paginate = True
-            if original_output_schema:  # TODO make better
-                schema_properties = original_output_schema.get("properties", {})
-                items = schema_properties.get("items", {})
-                output_schema = items
-                logger.info(f"output_schema: {output_schema}")
-
-        if change_consumer_id or should_paginate:
-            return self.tool.from_tool(
-                tool=self.tool,
-                transform_args=transform_args if change_consumer_id else None,
-                transform_fn=self.pagination_response if should_paginate else None,
-                output_schema=None,  # TODO correct
-            )
-
+    def _customize_tool(self, tool: Tool) -> Tool | None:
+        return tool.from_tool(
+            tool=tool,
+            transform_args={
+                "page": ArgTransform(hide=True, default_factory=lambda: self.page),
+                "size": ArgTransform(hide=True, default_factory=lambda: self.size),
+            },
+            transform_fn=self.transform_fn,
+            output_schema=self._convert_output_schema(tool.output_schema),
+        )
 
 def register_consumer_tools(mcp: FastMCP):
     """Register MCP tools for consumers and connections."""
@@ -106,12 +120,16 @@ def register_consumer_tools(mcp: FastMCP):
     return [consumers, get_consumer, consumer_connections]
 
 
-async def customize_tools(mcp: FastMCP, consumer_id: str | None = None) -> None:
+async def customize_tools(mcp: FastMCP, consumer_id: str | None = None, is_remote: bool = False):
     tools = await mcp.get_tools()
-    logger.info(f"Available tools: {list(tools.keys())}")
+    for tool_name, tool in tools.items():
+        if (consumer_id or is_remote) and "consumer_id" in tool.parameters.get("properties", {}):
+            tool = HideConsumerIdToolFactory.execute(tool)
 
-    # for tool_name, tool in tools.items():
-    #     new_tool = ToolCustomizer(tool, consumer_id).customize_tool()
-    #     if new_tool:
-    #         mcp.remove_tool(tool_name)
-    #         mcp.add_tool(new_tool)
+        if "page" in tool.parameters.get("properties", {}) and "size" in tool.parameters.get(
+            "properties", {}
+        ):
+            tool = PaginationToolFactory.execute(tool)
+
+        mcp.remove_tool(tool_name)
+        mcp.add_tool(tool)

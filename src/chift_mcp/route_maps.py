@@ -1,15 +1,17 @@
 from fastmcp.experimental.server.openapi import MCPType, RouteMap
-from fastmcp.server.openapi import MCPType, RouteMap
 
 from chift_mcp.utils.utils import CONNECTION_TYPES
 
 base_route_maps = [
+    # Exclude all routes not starting with /consumers
     RouteMap(pattern=r"^(?!\/consumers).*", mcp_type=MCPType.EXCLUDE),
+    # Exclude routes containing /syncs, /integrations, /webhooks, /datastores, /issues, /datastore
     RouteMap(pattern=r".*\/syncs.*", mcp_type=MCPType.EXCLUDE),
     RouteMap(pattern=r".*\/integrations.*", mcp_type=MCPType.EXCLUDE),
     RouteMap(pattern=r".*\/webhooks.*", mcp_type=MCPType.EXCLUDE),
     RouteMap(pattern=r".*\/datastores.*", mcp_type=MCPType.EXCLUDE),
     RouteMap(pattern=r".*\/issues.*", mcp_type=MCPType.EXCLUDE),
+    RouteMap(pattern=r".*\/datastore.*", mcp_type=MCPType.EXCLUDE),
 ]  # TODO Filter further the routes that can be exposed from consumers
 
 
