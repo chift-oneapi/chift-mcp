@@ -1,5 +1,14 @@
 import chift
 
+from chift_mcp.config import Chift
+
+
+def configure_chift(chift_config: Chift) -> None:
+    """Configure global Chift client settings."""
+    chift.client_secret = chift_config.client_secret
+    chift.client_id = chift_config.client_id
+    chift.account_id = chift_config.account_id
+    chift.url_base = chift_config.url_base
 
 
 def get_connection_types(consumer_id: str | None = None) -> list[str]:

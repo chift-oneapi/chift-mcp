@@ -208,37 +208,44 @@ class TestPaginationToolFactory:
         factory = PaginationToolFactory()
 
         mock_customized_tool = Mock(spec=Tool)
-        mock_tool_with_pagination.from_tool.return_value = mock_customized_tool
 
-        result = factory._customize_tool(mock_tool_with_pagination)
+        with patch(
+            "src.chift_mcp.tools.Tool.from_tool", return_value=mock_customized_tool
+        ) as mock_from_tool:
+            result = factory._customize_tool(mock_tool_with_pagination)
 
-        assert result == mock_customized_tool
+            assert result == mock_customized_tool
 
-        # Verify from_tool was called with correct parameters
-        mock_tool_with_pagination.from_tool.assert_called_once()
-        call_args = mock_tool_with_pagination.from_tool.call_args
+            # Verify from_tool was called with correct parameters
+            mock_from_tool.assert_called_once()
+            call_args = mock_from_tool.call_args
 
-        # Check that transform_args contains page and size with ArgTransform
-        transform_args = call_args.kwargs["transform_args"]
-        assert "page" in transform_args
-        assert "size" in transform_args
-        assert isinstance(transform_args["page"], ArgTransform)
-        assert isinstance(transform_args["size"], ArgTransform)
-        assert transform_args["page"].hide is True
-        assert transform_args["size"].hide is True
+            # Check that tool parameter is passed
+            assert call_args.kwargs["tool"] == mock_tool_with_pagination
 
-        # Check that transform_fn is set
-        assert call_args.kwargs["transform_fn"] == factory.transform_fn
+            # Check that transform_args contains page and size with ArgTransform
+            transform_args = call_args.kwargs["transform_args"]
+            assert "page" in transform_args
+            assert "size" in transform_args
+            assert isinstance(transform_args["page"], ArgTransform)
+            assert isinstance(transform_args["size"], ArgTransform)
+            assert transform_args["page"].hide is True
+            assert transform_args["size"].hide is True
 
-        # Check that output_schema is transformed
-        assert "output_schema" in call_args.kwargs
+            # Check that transform_fn is set
+            assert call_args.kwargs["transform_fn"] == factory.transform_fn
+
+            # Check that output_schema is transformed
+            assert "output_schema" in call_args.kwargs
 
     def test_execute_class_method(self, mock_tool_with_pagination):
         """Test the execute class method."""
         mock_customized_tool = Mock(spec=Tool)
-        mock_tool_with_pagination.from_tool.return_value = mock_customized_tool
 
-        result = PaginationToolFactory.execute(mock_tool_with_pagination)
+        with patch(
+            "src.chift_mcp.tools.Tool.from_tool", return_value=mock_customized_tool
+        ) as mock_from_tool:
+            result = PaginationToolFactory.execute(mock_tool_with_pagination)
 
-        assert result == mock_customized_tool
-        mock_tool_with_pagination.from_tool.assert_called_once()
+            assert result == mock_customized_tool
+            mock_from_tool.assert_called_once()

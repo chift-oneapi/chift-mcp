@@ -1,5 +1,7 @@
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from unittest.mock import Mock, AsyncMock
+
 from fastmcp import FastMCP
 from fastmcp.tools import Tool
 
@@ -35,34 +37,48 @@ def mock_fastmcp():
     return mock_mcp
 
 
-@pytest.fixture
-def mock_tool():
-    """Create a mock Tool instance for testing."""
+def default_tool_mock():
     mock = Mock(spec=Tool)
+    mock.name = "accounting_mock_tool"
+    mock.description = "Mock tool for testing"
+    mock.title = "Mock tool for testing"
+    mock.meta = {"tags": ["accounting"]}
     mock.parameters = {"properties": {}}
     mock.output_schema = None
     mock.tags = None
     mock.from_tool = Mock(return_value=mock)
+    mock.annotations = {}
+    mock.enabled = True
+    mock.serializer = None
+    mock.forwarding_fn = None
+    mock.parent_tool = None
+    mock.fn = None
+    return mock
+
+
+@pytest.fixture
+def mock_tool():
+    """Create a mock Tool instance for testing."""
+    mock = default_tool_mock()
     return mock
 
 
 @pytest.fixture
 def mock_tool_with_consumer_id():
     """Create a mock Tool with consumer_id parameter."""
-    mock = Mock(spec=Tool)
+    mock = default_tool_mock()
+    mock.name = "accounting_mock_tool_with_consumer_id"
     mock.parameters = {
         "properties": {"consumer_id": {"type": "string"}, "name": {"type": "string"}}
     }
-    mock.output_schema = None
-    mock.tags = ["accounting"]
-    mock.from_tool = Mock(return_value=mock)
     return mock
 
 
 @pytest.fixture
 def mock_tool_with_pagination():
     """Create a mock Tool with pagination parameters."""
-    mock = Mock(spec=Tool)
+    mock = default_tool_mock()
+    mock.name = "accounting_mock_tool_with_pagination"
     mock.parameters = {
         "properties": {
             "page": {"type": "integer"},
@@ -78,14 +94,15 @@ def mock_tool_with_pagination():
         },
     }
     mock.tags = ["pos"]
-    mock.from_tool = Mock(return_value=mock)
+    # mock.from_tool = Mock(return_value=mock)
     return mock
 
 
 @pytest.fixture
 def mock_tool_with_consumer_id_and_pagination():
     """Create a mock Tool with both consumer_id and pagination parameters."""
-    mock = Mock(spec=Tool)
+    mock = default_tool_mock()
+    mock.name = "accounting_mock_tool_with_consumer_id_and_pagination"
     mock.parameters = {
         "properties": {
             "consumer_id": {"type": "string"},
@@ -101,8 +118,6 @@ def mock_tool_with_consumer_id_and_pagination():
             "total": {"type": "integer"},
         },
     }
-    mock.tags = ["pos"]
-    mock.from_tool = Mock(return_value=mock)
     return mock
 
 

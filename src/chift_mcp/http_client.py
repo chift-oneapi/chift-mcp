@@ -20,8 +20,9 @@ class ClientAuth(Auth):
         request.headers.update(self.chift_auth.get_auth_header())
         yield request
 
+
 def get_http_client(
-    client_id: str, client_secret: str, account_id: str, base_url: str 
+    client_id: str, client_secret: str, account_id: str, base_url: str
 ) -> AsyncClient:
     return AsyncClient(
         base_url=base_url,

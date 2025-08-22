@@ -2,7 +2,6 @@ from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
 
-from fastmcp import FastMCP
 from fastmcp.tools import Tool
 
 from src.chift_mcp.tools import (

@@ -4,7 +4,6 @@ from fastmcp import FastMCP
 
 
 def add_prompts(mcp: FastMCP) -> None:
-
     @mcp.prompt()
     def initial_prompt() -> str:
         return textwrap.dedent(

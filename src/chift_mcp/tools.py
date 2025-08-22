@@ -88,7 +88,7 @@ class PaginationToolFactory(ToolFactory):
         return new_schema
 
     def _customize_tool(self, tool: Tool) -> Tool | None:
-        return tool.from_tool(
+        return Tool.from_tool(
             tool=tool,
             transform_args={
                 "page": ArgTransform(hide=True, default_factory=lambda: self.page),
@@ -97,6 +97,7 @@ class PaginationToolFactory(ToolFactory):
             transform_fn=self.transform_fn,
             output_schema=self._convert_output_schema(tool.output_schema),
         )
+
 
 def register_consumer_tools(mcp: FastMCP):
     """Register MCP tools for consumers and connections."""

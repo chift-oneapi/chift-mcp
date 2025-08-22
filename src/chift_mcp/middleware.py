@@ -1,12 +1,13 @@
-from functools import cached_property
 from typing import Any
+
 import chift
 import mcp.types as mt
 
 from fastmcp.server.middleware import CallNext, Middleware, MiddlewareContext
 from fastmcp.tools.tool import Tool
-from chift_mcp.utils.utils import CONNECTION_TYPES
 from fastmcp.utilities.logging import get_logger
+
+from chift_mcp.utils.utils import CONNECTION_TYPES
 
 logger = get_logger(__name__)
 
@@ -24,8 +25,6 @@ class UserAuthMiddleware(Middleware):
         context: MiddlewareContext[mt.Request],
         call_next: CallNext[mt.Request, Any],
     ) -> Any:
-
-
         if self.consumer_id is None:
             return await call_next(context)
 
@@ -65,7 +64,6 @@ class FilterToolsMiddleware(Middleware):
         context: MiddlewareContext[mt.ListToolsRequest],
         call_next: CallNext[mt.ListToolsRequest, list[Tool]],
     ) -> list[Tool]:
-
         if context.fastmcp_context is None:
             raise ValueError("FastMCP context is not set")
 
@@ -79,8 +77,7 @@ class FilterToolsMiddleware(Middleware):
         result = [
             tool
             for tool in result
-            if tool.tags
-            and any(tag in connection_types for tag in tool.tags)
+            if tool.tags and any(tag in connection_types for tag in tool.tags)
         ]
 
         return result
