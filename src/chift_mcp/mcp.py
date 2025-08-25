@@ -1,5 +1,3 @@
-import asyncio
-
 from fastmcp import FastMCP
 from fastmcp.experimental.server.openapi.components import (
     OpenAPIResource,
@@ -72,17 +70,3 @@ async def get_mcp(name: str = "Chift API Bridge"):
     )  # Customize tools to modify openapi spec
 
     return mcp
-
-
-async def run_mcp_async():
-    mcp = await get_mcp()
-    await mcp.run_async()
-
-
-def main():
-    """Entry point for the CLI script."""
-    asyncio.run(run_mcp_async())
-
-
-if __name__ == "__main__":
-    main()
