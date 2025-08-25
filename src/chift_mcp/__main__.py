@@ -74,10 +74,15 @@ async def get_mcp(name: str = "Chift API Bridge"):
     return mcp
 
 
-async def main():
+async def run_mcp_async():
     mcp = await get_mcp()
     await mcp.run_async()
 
 
+def main():
+    """Entry point for the CLI script."""
+    asyncio.run(run_mcp_async())
+
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
