@@ -1,6 +1,7 @@
 import chift
 
 from chift_mcp.config import Chift
+from chift_mcp.constants import CHIFT_DOMAINS, CHIFT_OPERATION_TYPES
 
 
 def configure_chift(chift_config: Chift) -> None:
@@ -11,33 +12,56 @@ def configure_chift(chift_config: Chift) -> None:
     chift.url_base = chift_config.url_base
 
 
-def get_connection_types(consumer_id: str | None = None) -> list[str]:
+def validate_config(function_config: dict) -> dict:
     """
-    Get the connection types for a consumer.
+    Validates and deduplicates Chift domain operation configuration.
 
     Args:
-        consumer_id (str): The consumer ID
+        function_config (dict): Dictionary with configuration {domain: [operation_types]}
 
     Returns:
-        list[str]: The connection types
+        dict: Validated and deduplicated configuration
+
+    Raises:
+        ValueError: If configuration is invalid
+
+    Example:
+        >>> config = {"accounting": ["get", "get", "update"], "commerce": ["update"]}
+        >>> validate_config(config)
+        {"accounting": ["get", "update"], "commerce": ["update"]}
+
+        >>> invalid_config = {"accounting": ["invalid_operation"]}
+        >>> validate_config(invalid_config)
+        ValueError: Invalid configuration. Check domains and operation types.
     """
-    if consumer_id is None:
-        return list(CONNECTION_TYPES.values())
 
-    consumer = chift.Consumer.get(chift_id=consumer_id)
+    # Check if config is a dictionary
+    if not isinstance(function_config, dict):
+        raise ValueError("Configuration must be a dictionary")
 
-    connections = consumer.Connection.all()
+    result_config = {}
 
-    return [CONNECTION_TYPES[connection.api] for connection in connections]
+    # Check each key and value
+    for domain, operations in function_config.items():
+        # Check if domain is supported
+        if domain not in CHIFT_DOMAINS:
+            raise ValueError(f"Invalid domain: {domain}")
 
+        # Check if operations is a list
+        if not isinstance(operations, list):
+            raise ValueError(f"Operations for domain {domain} must be a list")
 
-CONNECTION_TYPES = {
-    "Accounting": "accounting",
-    "Point of Sale": "pos",
-    "eCommerce": "ecommerce",
-    "Invoicing": "invoicing",
-    "Banking": "banking",
-    "Payment": "payment",
-    "Property Management System": "pms",
-    "Custom": "custom",
-}
+        # Deduplicate operations
+        unique_operations = []
+        for operation in operations:
+            # Check if operation is supported
+            if operation not in CHIFT_OPERATION_TYPES:
+                raise ValueError(f"Invalid operation type: {operation}")
+
+            # Add only unique operations
+            if operation not in unique_operations:
+                unique_operations.append(operation)
+
+        result_config[domain] = unique_operations
+
+    return result_config

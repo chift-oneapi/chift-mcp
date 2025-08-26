@@ -1,6 +1,6 @@
 from fastmcp.experimental.server.openapi import MCPType, RouteMap
 
-from chift_mcp.utils.utils import CONNECTION_TYPES
+from chift_mcp.constants import CONNECTION_TYPES
 
 base_route_maps = [
     # Exclude all routes not starting with /consumers

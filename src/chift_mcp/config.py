@@ -4,6 +4,8 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
+from chift_mcp.constants import DEFAULT_CONFIG
+
 
 class Chift(BaseSettings):
     model_config = SettingsConfigDict(
@@ -15,3 +17,4 @@ class Chift(BaseSettings):
     url_base: str = "https://api.chift.eu"
     consumer_id: str | None = None
     is_remote: bool = Field(default=False)
+    function_config: dict[str, list[str]] = DEFAULT_CONFIG
