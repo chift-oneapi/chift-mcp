@@ -1,10 +1,26 @@
 import asyncio
 
-from chift_mcp.mcp import get_mcp
+from chift_mcp.config import Chift
+from chift_mcp.mcp import create_mcp
+from chift_mcp.middleware import EnvAuthMiddleware
+
+
+async def configure_mcp():
+    chift_config = Chift()
+    mcp = await create_mcp(
+        chift_config=chift_config,
+        name="Chift API Bridge",
+        is_remote=False,
+        auth=None,
+        middleware=[
+            EnvAuthMiddleware(chift_config.consumer_id, chift_config.function_config),
+        ],
+    )
+    return mcp
 
 
 async def run_mcp_async():
-    mcp = await get_mcp()
+    mcp = await configure_mcp()
     await mcp.run_async()
 
 

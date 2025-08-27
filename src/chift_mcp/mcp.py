@@ -1,23 +1,30 @@
 from fastmcp import FastMCP
+from fastmcp.server.auth import AuthProvider
+from fastmcp.server.middleware import Middleware
 from fastmcp.utilities.logging import get_logger
 from httpx import get
 
-from chift_mcp.config import Chift
-from chift_mcp.http_client import get_http_client
-from chift_mcp.middleware import FilterToolsMiddleware, UserAuthMiddleware
-from chift_mcp.prompts import add_prompts
-from chift_mcp.route_maps import get_route_maps
-from chift_mcp.tools import customize_tools, register_consumer_tools
-from chift_mcp.utils.utils import configure_chift
+from chift_mcp import (
+    Chift,
+    FilterToolsMiddleware,
+    add_prompts,
+    configure_chift,
+    customize_tools,
+    get_http_client,
+    get_route_maps,
+)
 
-chift_config = Chift()
-
-base_url = chift_config.url_base
 logger = get_logger(__name__)
 
 
-async def get_mcp(name: str = "Chift API Bridge"):
-    if not base_url:
+async def create_mcp(
+    chift_config: Chift,
+    name: str = "Chift API Bridge",
+    is_remote: bool = False,
+    auth: AuthProvider | None = None,
+    middleware: list[Middleware] | None = None,
+) -> FastMCP:
+    if not chift_config.url_base:
         raise ValueError("Chift URL base is not set")
 
     tags_to_exclude = ["consumers", "connections"]
@@ -27,31 +34,27 @@ async def get_mcp(name: str = "Chift API Bridge"):
         client_id=chift_config.client_id,
         client_secret=chift_config.client_secret,
         account_id=chift_config.account_id,
-        base_url=base_url,
+        base_url=chift_config.url_base,
     )
 
     configure_chift(chift_config)
     consumer_id = chift_config.consumer_id
 
-    openapi_spec = get(f"{base_url}/openapi.json").json()
+    openapi_spec = get(f"{chift_config.url_base}/openapi.json").json()
     mcp = FastMCP.from_openapi(
         openapi_spec=openapi_spec,
         client=client,
         name=name,
         route_maps=route_maps,
         middleware=[
-            UserAuthMiddleware(consumer_id, chift_config.function_config),
-            FilterToolsMiddleware(),
+            *(middleware or []),
+            FilterToolsMiddleware(consumer_id, is_remote),
         ],
+        auth=auth,
     )
 
     add_prompts(mcp)
 
-    if not consumer_id:  # Add tools allowing to list all consumers and connections
-        register_consumer_tools(mcp)
-
-    await customize_tools(
-        mcp, consumer_id, chift_config.is_remote
-    )  # Customize tools to modify openapi spec
+    await customize_tools(mcp, consumer_id, is_remote)  # Customize tools to modify openapi spec
 
     return mcp

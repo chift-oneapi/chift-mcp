@@ -12,9 +12,9 @@ from chift_mcp.constants import CONNECTION_TYPES
 logger = get_logger(__name__)
 
 
-class UserAuthMiddleware(Middleware):
+class EnvAuthMiddleware(Middleware):
     """
-    Middleware to add the consumer ID and function config to the context.
+    Middleware to add the consumer ID and function config to the context from the environment vars.
     For STDIO MCP only
     """
 
@@ -72,6 +72,10 @@ class FilterToolsMiddleware(Middleware):
     available for the required consumer.
     """
 
+    def __init__(self, consumer_id: str | None, is_remote: bool):
+        self.consumer_id = consumer_id
+        self.is_remote = is_remote
+
     async def on_list_tools(
         self,
         context: MiddlewareContext[mt.ListToolsRequest],
@@ -89,6 +93,7 @@ class FilterToolsMiddleware(Middleware):
         result = await call_next(context)
         logger.info(f"Function config: {function_config}")
         filtered_tools = []
+        logger.info(f"Result: {len(result)}")
         for tool in result:
             parts = tool.name.split("_")
             if len(parts) < 3:  # TODO caused by 3 extra tools, need to update this
@@ -96,9 +101,21 @@ class FilterToolsMiddleware(Middleware):
                 continue
             domain = parts[0]
             operation = parts[1]
+            if (
+                self.consumer_id is None
+                and self.is_remote is False
+                and domain in ["consumers", "connections"]
+                and operation == "get"
+            ):
+                # Add 3 special tools when consumer_id is not set and not remote
+                filtered_tools.append(tool)
+                continue
+
             if domain not in connection_types or operation not in function_config.get(domain, []):
                 continue
 
             filtered_tools.append(tool)
+
+        logger.info(f"Filtered tools: {len(filtered_tools)}")
 
         return filtered_tools

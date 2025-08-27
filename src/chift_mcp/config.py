@@ -16,5 +16,4 @@ class Chift(BaseSettings):
     account_id: str = Field(default=...)
     url_base: str = "https://api.chift.eu"
     consumer_id: str | None = None
-    is_remote: bool = Field(default=False)
     function_config: dict[str, list[str]] = DEFAULT_CONFIG

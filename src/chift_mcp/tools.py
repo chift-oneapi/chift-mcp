@@ -1,7 +1,5 @@
 from typing import Annotated, Any
 
-import chift
-
 from fastmcp import FastMCP
 from fastmcp.server.dependencies import get_context
 from fastmcp.tools import Tool
@@ -97,28 +95,6 @@ class PaginationToolFactory(ToolFactory):
             transform_fn=self.transform_fn,
             output_schema=self._convert_output_schema(tool.output_schema),
         )
-
-
-def register_consumer_tools(mcp: FastMCP):
-    """Register MCP tools for consumers and connections."""
-
-    @mcp.tool()
-    def consumers():
-        """Get list of available consumers."""
-        return chift.Consumer.all()
-
-    @mcp.tool()
-    def get_consumer(consumer_id: str):
-        """Get specific consumer by ID."""
-        return chift.Consumer.get(chift_id=consumer_id)
-
-    @mcp.tool()
-    def consumer_connections(consumer_id: str):
-        """Get list of connections for a specific consumer."""
-        consumer = chift.Consumer.get(chift_id=consumer_id)
-        return consumer.Connection.all()
-
-    return [consumers, get_consumer, consumer_connections]
 
 
 async def customize_tools(mcp: FastMCP, consumer_id: str | None = None, is_remote: bool = False):
