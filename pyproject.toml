@@ -78,7 +78,7 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 
 [tool.uv.sources]
-fastmcp = { path = "../../fastmcp" }
+fastmcp = { git = "https://github.com/jlowin/fastmcp.git" }
 
 [build-system]
 requires = ["hatchling"]
