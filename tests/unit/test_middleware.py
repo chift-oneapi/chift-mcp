@@ -4,7 +4,7 @@ import pytest
 
 from fastmcp.tools.tool import Tool
 
-from src.chift_mcp.middleware import FilterToolsMiddleware, EnvAuthMiddleware
+from src.chift_mcp.middleware import EnvAuthMiddleware, FilterToolsMiddleware
 
 
 class TestUserAuthMiddleware:
@@ -73,7 +73,7 @@ class TestFilterToolsMiddleware:
 
     def test_init(self):
         """Test middleware initialization."""
-        middleware = FilterToolsMiddleware()
+        middleware = FilterToolsMiddleware(None, True)
         # No specific initialization to test, just ensure it doesn't error
         assert middleware is not None
 
@@ -82,7 +82,7 @@ class TestFilterToolsMiddleware:
         self, mock_middleware_context, mock_fastmcp_context
     ):
         """Test on_list_tools when no consumer_id in context."""
-        middleware = FilterToolsMiddleware()
+        middleware = FilterToolsMiddleware(None, True)
 
         # Set up context
         mock_fastmcp_context.get_state.return_value = None
@@ -104,7 +104,7 @@ class TestFilterToolsMiddleware:
         self, mock_middleware_context, mock_fastmcp_context
     ):
         """Test on_list_tools filters tools by connection types."""
-        middleware = FilterToolsMiddleware()
+        middleware = FilterToolsMiddleware(None, True)
 
         # Mock context with function_config
         mock_fastmcp_context.get_state.return_value = {
@@ -142,7 +142,7 @@ class TestFilterToolsMiddleware:
         self, mock_middleware_context
     ):
         """Test on_list_tools raises error when fastmcp_context is None."""
-        middleware = FilterToolsMiddleware()
+        middleware = FilterToolsMiddleware(None, True)
 
         mock_middleware_context.fastmcp_context = None
 
@@ -156,7 +156,7 @@ class TestFilterToolsMiddleware:
         self, mock_middleware_context, mock_fastmcp_context
     ):
         """Test on_list_tools correctly handles tools without expected naming pattern."""
-        middleware = FilterToolsMiddleware()
+        middleware = FilterToolsMiddleware(None, True)
 
         # Mock context with function_config
         mock_fastmcp_context.get_state.return_value = {"accounting": ["mock"]}
@@ -181,3 +181,80 @@ class TestFilterToolsMiddleware:
         assert mock_tool1 in result
         assert mock_tool2 not in result
         assert mock_tool3 in result
+
+    @pytest.mark.asyncio
+    async def test_on_list_tools_includes_special_tools_when_no_consumer_and_not_remote(
+        self, mock_middleware_context, mock_fastmcp_context
+    ):
+        """Include consumers/connections get tools when no consumer_id and not remote."""
+        middleware = FilterToolsMiddleware(None, False)
+
+        # function_config is empty to ensure only special tools get through
+        mock_fastmcp_context.get_state.return_value = {}
+        mock_middleware_context.fastmcp_context = mock_fastmcp_context
+
+        t1 = Mock(spec=Tool)
+        t1.name = "consumers_get_tool"
+        t2 = Mock(spec=Tool)
+        t2.name = "connections_get_tool"
+        t3 = Mock(spec=Tool)
+        t3.name = "consumers_update_tool"  # should be filtered
+        t4 = Mock(spec=Tool)
+        t4.name = "connections_update_tool"  # should be filtered
+        t5 = Mock(spec=Tool)
+        t5.name = "accounting_mock_tool"  # should be filtered
+
+        mock_call_next = AsyncMock()
+        mock_call_next.return_value = [t1, t2, t3, t4, t5]
+
+        result = await middleware.on_list_tools(mock_middleware_context, mock_call_next)
+
+        assert t1 in result
+        assert t2 in result
+        assert t3 not in result
+        assert t4 not in result
+        assert t5 not in result
+
+    @pytest.mark.asyncio
+    async def test_on_list_tools_excludes_special_tools_when_consumer_set(
+        self, mock_middleware_context, mock_fastmcp_context
+    ):
+        """Exclude special tools when consumer_id is set."""
+        middleware = FilterToolsMiddleware("consumer-123", False)
+
+        mock_fastmcp_context.get_state.return_value = {"accounting": ["mock"]}
+        mock_middleware_context.fastmcp_context = mock_fastmcp_context
+
+        t1 = Mock(spec=Tool)
+        t1.name = "consumers_get_tool"
+        t2 = Mock(spec=Tool)
+        t2.name = "connections_get_tool"
+        mock_call_next = AsyncMock()
+        mock_call_next.return_value = [t1, t2]
+
+        result = await middleware.on_list_tools(mock_middleware_context, mock_call_next)
+
+        assert t1 not in result
+        assert t2 not in result
+
+    @pytest.mark.asyncio
+    async def test_on_list_tools_excludes_special_tools_when_remote(
+        self, mock_middleware_context, mock_fastmcp_context
+    ):
+        """Exclude special tools when running remotely even if consumer is None."""
+        middleware = FilterToolsMiddleware(None, True)
+
+        mock_fastmcp_context.get_state.return_value = {"accounting": ["mock"]}
+        mock_middleware_context.fastmcp_context = mock_fastmcp_context
+
+        t1 = Mock(spec=Tool)
+        t1.name = "consumers_get_tool"
+        t2 = Mock(spec=Tool)
+        t2.name = "connections_get_tool"
+        mock_call_next = AsyncMock()
+        mock_call_next.return_value = [t1, t2]
+
+        result = await middleware.on_list_tools(mock_middleware_context, mock_call_next)
+
+        assert t1 not in result
+        assert t2 not in result
