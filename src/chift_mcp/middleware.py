@@ -96,9 +96,6 @@ class FilterToolsMiddleware(Middleware):
         logger.info(f"Result: {len(result)}")
         for tool in result:
             parts = tool.name.split("_")
-            if len(parts) < 3:  # TODO caused by 3 extra tools, need to update this
-                filtered_tools.append(tool)
-                continue
             domain = parts[0]
             operation = parts[1]
             if (
