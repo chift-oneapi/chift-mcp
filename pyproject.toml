@@ -17,7 +17,7 @@ dependencies = [
 ]
 
 [project.scripts]
-chift-mcp-server = "chift_mcp.main:main"
+chift-mcp-server = "chift_mcp.__main__:main"
 
 [dependency-groups]
 dev = [

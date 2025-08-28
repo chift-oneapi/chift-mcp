@@ -1,10 +1,15 @@
 {
   "$schema": "https://gofastmcp.com/schemas/fastmcp_config/v1.json",
-  "entrypoint": {
-    "file": "src/chift_mcp/main.py",
-    "object": "get_mcp"
+  "source": {
+    "path": "src/chift_mcp/__main__.py",
+    "entrypoint": "configure_mcp"
   },
   "environment": {
     "dependencies": ["chift"]
+  },
+  "deployment": {
+    "env": {
+      "FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER": "true"
+    }
   }
 }
