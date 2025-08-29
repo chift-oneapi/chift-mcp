@@ -91,9 +91,7 @@ class FilterToolsMiddleware(Middleware):
         connection_types = list(function_config.keys())
 
         result = await call_next(context)
-        logger.info(f"Function config: {function_config}")
         filtered_tools = []
-        logger.info(f"Result: {len(result)}")
         for tool in result:
             parts = tool.name.split("_")
             domain = parts[0]
@@ -112,7 +110,5 @@ class FilterToolsMiddleware(Middleware):
                 continue
 
             filtered_tools.append(tool)
-
-        logger.info(f"Filtered tools: {len(filtered_tools)}")
 
         return filtered_tools

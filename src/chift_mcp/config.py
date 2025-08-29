@@ -17,3 +17,4 @@ class Chift(BaseSettings):
     url_base: str = "https://api.chift.eu"
     consumer_id: str | None = None
     function_config: dict[str, list[str]] = DEFAULT_CONFIG
+    server_name: str = "Chift MCP Server"
