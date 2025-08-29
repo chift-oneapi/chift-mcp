@@ -23,7 +23,7 @@ async def configure_mcp():
 
 async def run_mcp_async():
     mcp = await configure_mcp()
-    await mcp.run_async()
+    await mcp.run_async(transport="stdio")
 
 
 def main():

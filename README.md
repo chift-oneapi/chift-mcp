@@ -161,7 +161,6 @@ like this:
         "--directory",
         "/path/to/your/local/chift-mcp",
         "chift-mcp-server",
-        "stdio"
       ],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
