@@ -93,7 +93,7 @@ class FilterToolsMiddleware(Middleware):
         result = await call_next(context)
         filtered_tools = []
         for tool in result:
-            if tool.name == "SearchChift": # Special Tool coming from the proxy
+            if tool.name == "SearchChift":  # Special Tool coming from the proxy
                 filtered_tools.append(tool)
                 continue
 
