@@ -19,29 +19,32 @@ logger = get_logger(__name__)
 
 
 async def create_mcp(
-    chift_config: Chift,
+    url_base: str,
     name: str = "Chift API Bridge",
+    chift_config: Chift | None = None,
     is_remote: bool = False,
     auth: AuthProvider | None = None,
     middleware: list[Middleware] | None = None,
 ) -> FastMCP:
-    if not chift_config.url_base:
+    if not url_base:
         raise ValueError("Chift URL base is not set")
+
+    if not is_remote and not chift_config:
+        raise ValueError("Chift config is not set")
 
     tags_to_exclude = ["consumers", "connections"]
     route_maps = get_route_maps(tags_to_exclude)
 
     client = get_http_client(
-        client_id=chift_config.client_id,
-        client_secret=chift_config.client_secret,
-        account_id=chift_config.account_id,
-        base_url=chift_config.url_base,
+        chift_config,
+        url_base,
     )
+    consumer_id = None
+    if chift_config:
+        configure_chift(chift_config)
+        consumer_id = chift_config.consumer_id
 
-    configure_chift(chift_config)
-    consumer_id = chift_config.consumer_id
-
-    openapi_spec = get(f"{chift_config.url_base}/openapi.json").json()
+    openapi_spec = get(f"{url_base}/openapi.json").json()
     mcp = FastMCPOpenAPI(
         openapi_spec=openapi_spec,
         client=client,

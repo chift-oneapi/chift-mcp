@@ -9,8 +9,9 @@ from chift_mcp.proxy import proxy
 async def configure_mcp():
     chift_config = Chift()
     mcp = await create_mcp(
-        chift_config=chift_config,
+        url_base=chift_config.url_base,
         name="Chift API Bridge",
+        chift_config=chift_config,
         is_remote=False,
         auth=None,
         middleware=[
