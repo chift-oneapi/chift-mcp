@@ -3,6 +3,7 @@ import asyncio
 from chift_mcp.config import Chift
 from chift_mcp.mcp import create_mcp
 from chift_mcp.middleware import EnvAuthMiddleware
+from chift_mcp.proxy import proxy
 
 
 async def configure_mcp():
@@ -16,6 +17,7 @@ async def configure_mcp():
             EnvAuthMiddleware(chift_config.consumer_id, chift_config.function_config),
         ],
     )
+    await mcp.import_server(proxy)
     return mcp
 
 
