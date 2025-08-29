@@ -111,7 +111,7 @@ In Claude Desktop, you can access the config file at:
   "mcpServers": {
     "chift": {
       "command": "/path/to/uv",
-      "args": ["chift-mcp-server", "stdio"],
+      "args": ["chift-mcp-server"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
@@ -133,13 +133,13 @@ Alternatively, you can use this simplified configuration if you have the `chift-
   "mcpServers": {
     "chift": {
       "command": "uvx",
-      "args": ["chift-mcp-server", "stdio"],
+      "args": ["chift-mcp-server"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
-        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
       }
     }
   }
@@ -251,7 +251,8 @@ async function main() {
           CHIFT_CLIENT_SECRET: "your_client_secret",
           CHIFT_CLIENT_ID: "your_client_id",
           CHIFT_ACCOUNT_ID: "your_account_id",
-          CHIFT_URL_BASE: "https://api.chift.eu",
+          CHIFT_URL_BASE: "https://api.chift.eu", // Optional
+          CHIFT_CONSUMER_ID: "your_consumer_id" // Optional
         },
       }),
     });

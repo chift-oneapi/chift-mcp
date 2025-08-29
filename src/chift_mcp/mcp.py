@@ -1,4 +1,5 @@
 from fastmcp import FastMCP
+from fastmcp.experimental.server.openapi import FastMCPOpenAPI
 from fastmcp.server.auth import AuthProvider
 from fastmcp.server.middleware import Middleware
 from fastmcp.utilities.logging import get_logger
@@ -41,7 +42,7 @@ async def create_mcp(
     consumer_id = chift_config.consumer_id
 
     openapi_spec = get(f"{chift_config.url_base}/openapi.json").json()
-    mcp = FastMCP.from_openapi(
+    mcp = FastMCPOpenAPI(
         openapi_spec=openapi_spec,
         client=client,
         name=name,
