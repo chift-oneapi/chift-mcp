@@ -55,6 +55,7 @@ async def create_mcp(
             FilterToolsMiddleware(consumer_id, is_remote),
         ],
         auth=auth,
+        timeout=30,
     )
 
     add_prompts(mcp)
