@@ -159,16 +159,18 @@ class TestFilterToolsMiddleware:
         middleware = FilterToolsMiddleware(None, True)
 
         # Mock context with function_config
-        mock_fastmcp_context.get_state.return_value = {"accounting": ["mock"]}
+        mock_fastmcp_context.get_state.return_value = {"accounting": ["get", "create"]}
         mock_middleware_context.fastmcp_context = mock_fastmcp_context
 
         # Mock tools, some without the expected 3-part name
         mock_tool1 = Mock(spec=Tool)
-        mock_tool1.name = "accounting_mock_tool"
+        mock_tool1.name = "accounting_get_tool"
         mock_tool2 = Mock(spec=Tool)
-        mock_tool2.name = "accounting_other_tool"
+        mock_tool2.name = "accounting_create_tool"
         mock_tool3 = Mock(spec=Tool)
         mock_tool3.name = "invalid"
+        mock_tool4 = Mock(spec=Tool)
+        mock_tool4.name = "accounting_update_tool"
 
         mock_tools = [mock_tool1, mock_tool2, mock_tool3]
         mock_call_next = AsyncMock()
@@ -177,10 +179,11 @@ class TestFilterToolsMiddleware:
         result = await middleware.on_list_tools(mock_middleware_context, mock_call_next)
 
         # Should include matching tool and pass through those without expected naming
-        assert len(result) == 2
+        assert len(result) == 2, f"Expected 2 tools, got {len(result)}: {[x.name for x in result]}"
         assert mock_tool1 in result
-        assert mock_tool2 not in result
-        assert mock_tool3 in result
+        assert mock_tool2 in result
+        assert mock_tool3 not in result
+        assert mock_tool4 not in result
 
     @pytest.mark.asyncio
     async def test_on_list_tools_includes_special_tools_when_no_consumer_and_not_remote(
