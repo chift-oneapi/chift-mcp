@@ -39,7 +39,10 @@ def get_http_client(
     return AsyncClient(
         base_url=url_base,
         auth=ClientAuth(
-            chift_config.client_id, chift_config.client_secret, chift_config.account_id, url_base
+            chift_config.client_id,
+            chift_config.client_secret.get_secret_value(),
+            chift_config.account_id,
+            url_base,
         )
         if chift_config
         else None,
