@@ -1,96 +1,67 @@
-from typing import Any
+import chift
 
-from chift.openapi.models import (
-    Connection,
-    Consumer,
-)
-from mcp.server import FastMCP
+from chift_mcp.config import Chift
+from chift_mcp.constants import CHIFT_DOMAINS, CHIFT_OPERATION_TYPES
 
 
-def register_mcp_tools(mcp: FastMCP, tools: list[dict], consumer: Consumer) -> None:
-    for tool_info in tools:
-        tool_name = tool_info["name"]
-        params = tool_info["params"]
-        description = tool_info["description"]
-
-        # Create parameter list and annotations
-        param_list = []
-        param_annotations = {}
-
-        for param in params:
-            # Parse parameter information
-            if ":" in param:
-                param_parts = param.split(":", 1)
-                param_name = param_parts[0]
-                param_type = param_parts[1]
-            else:
-                param_name = param
-                param_type = "Any"
-
-            # Handle default values
-            if "=" in param_name:
-                param_name, default_val = param_name.split("=", 1)
-                param_list.append(f"{param_name}={default_val}")
-            else:
-                param_list.append(param_name)
-
-            # Set type annotation
-            if "=" in param_type:
-                param_type = param_type.split("=")[0]
-
-            if param_type == "str":
-                param_annotations[param_name] = str
-            elif param_type == "int":
-                param_annotations[param_name] = int
-            elif param_type == "float":
-                param_annotations[param_name] = float
-            elif param_type == "bool":
-                param_annotations[param_name] = bool
-            elif param_type == "dict":
-                param_annotations[param_name] = dict
-            elif "list" in param_type.lower():
-                param_annotations[param_name] = list[Any]
-            elif "chift.openapi.models" in param_type:
-                # For model types we use Any for now
-                param_annotations[param_name] = Any
-            else:
-                param_annotations[param_name] = Any
-
-        # Function creation
-        exec_globals = {"consumer": consumer, "List": list, "Any": Any}
-
-        fn_def = f"""
-def {tool_name}({", ".join(param_list)}):
-    \"\"\"
-    {description}
-    \"\"\"
-    return {tool_info["func"]}
-"""
-
-        exec(fn_def, exec_globals)
-
-        # Get function and add annotations
-        tool_fn = exec_globals[tool_name]
-        tool_fn.__annotations__ = param_annotations
-
-        # Set return type
-        response_type = tool_info["response_type"]
-        if response_type == "bool":
-            tool_fn.__annotations__["return"] = bool
-        elif response_type == "dict":
-            tool_fn.__annotations__["return"] = dict
-        elif response_type.startswith("list") or response_type.startswith("List"):
-            tool_fn.__annotations__["return"] = list[Any]
-        else:
-            tool_fn.__annotations__["return"] = Any
-
-        # Register with MCP
-        mcp.tool()(tool_fn)
+def configure_chift(chift_config: Chift) -> None:
+    """Configure global Chift client settings."""
+    chift.client_secret = chift_config.client_secret
+    chift.client_id = chift_config.client_id
+    chift.account_id = chift_config.account_id
+    chift.url_base = chift_config.url_base
 
 
-def map_connections_to_modules(connections: list[Connection]) -> set[str]:
-    modules = []
-    for connection in connections:
-        if connection.api not in modules:
-            modules.append(f"chift.models.consumers.{connection.api.lower()}")
-    return set(modules)
+def validate_config(function_config: dict) -> dict:
+    """
+    Validates and deduplicates Chift domain operation configuration.
+
+    Args:
+        function_config (dict): Dictionary with configuration {domain: [operation_types]}
+
+    Returns:
+        dict: Validated and deduplicated configuration
+
+    Raises:
+        ValueError: If configuration is invalid
+
+    Example:
+        >>> config = {"accounting": ["get", "get", "update"], "commerce": ["update"]}
+        >>> validate_config(config)
+        {"accounting": ["get", "update"], "commerce": ["update"]}
+
+        >>> invalid_config = {"accounting": ["invalid_operation"]}
+        >>> validate_config(invalid_config)
+        ValueError: Invalid configuration. Check domains and operation types.
+    """
+
+    # Check if config is a dictionary
+    if not isinstance(function_config, dict):
+        raise ValueError("Configuration must be a dictionary")
+
+    result_config = {}
+
+    # Check each key and value
+    for domain, operations in function_config.items():
+        # Check if domain is supported
+        if domain not in CHIFT_DOMAINS:
+            raise ValueError(f"Invalid domain: {domain}")
+
+        # Check if operations is a list
+        if not isinstance(operations, list):
+            raise ValueError(f"Operations for domain {domain} must be a list")
+
+        # Deduplicate operations
+        unique_operations = []
+        for operation in operations:
+            # Check if operation is supported
+            if operation not in CHIFT_OPERATION_TYPES:
+                raise ValueError(f"Invalid operation type: {operation}")
+
+            # Add only unique operations
+            if operation not in unique_operations:
+                unique_operations.append(operation)
+
+        result_config[domain] = unique_operations
+
+    return result_config

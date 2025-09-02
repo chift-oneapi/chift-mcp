@@ -1,6 +1,6 @@
 [project]
-name = "chift-mcp-server"
-version = "0.1.4"
+name = "chift-mcp"
+version = "0.2.0"
 description = "MCP Server to interact with Chift API via Chift Python SDK"
 authors = [{ name = "Dima Redchyts", email = "dima.redchyts@chift.eu" }]
 requires-python = ">=3.11,<4.0"
@@ -8,11 +8,13 @@ readme = "README.md"
 license = "MIT"
 dependencies = [
     "mcp[cli]==1.12.4",
-    "chift==0.3.10",
+    "chift==0.3.11",
     "pydantic-config>=0.3.0",
     "loguru>=0.7.3",
     "inflect>=7.5.0",
     "pydantic>=2.11.7",
+    "fastmcp>=2.12.0",
+    "mcp>=1.12.4",
 ]
 
 [project.scripts]
@@ -21,6 +23,7 @@ chift-mcp-server = "chift_mcp.__main__:main"
 [dependency-groups]
 dev = [
     "pytest",
+    "pytest-asyncio",
     "ruff>=0.3.4",
     "poethepoet>=0.24.0"
 ]
@@ -67,6 +70,13 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 docstring-code-format = false
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
 
 [build-system]
 requires = ["hatchling"]

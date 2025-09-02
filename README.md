@@ -30,7 +30,7 @@ The toolkit includes methods across several financial domains:
 - **Creation**: Create clients, suppliers, ledger accounts, analytic accounts, journals
 - **Financial Operations**: Match entries, create financial entries, get account balances
 
-### Commerce (E-commerce)
+### E-commerce
 
 - **Product Management**: Get products, variants, update inventory quantities
 - **Customer Management**: Retrieve customer information
@@ -48,6 +48,12 @@ The toolkit includes methods across several financial domains:
 
 - **Financial Tracking**: Get balances, transactions, payments
 - **Refund Management**: Get refunds
+
+### Banking
+
+- **Accounts**: Get accounts, balances
+- **Transactions**: Get transactions
+- **Financial Insitutions**: Get list of financial institutions
 
 ### PMS (Property Management)
 
@@ -105,15 +111,13 @@ In Claude Desktop, you can access the config file at:
   "mcpServers": {
     "chift": {
       "command": "/path/to/uv",
-      "args": [
-        "chift-mcp-server",
-        "stdio"
-      ],
+      "args": ["chift-mcp-server"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
-        "CHIFT_URL_BASE": "https://api.chift.eu"
+        "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
       }
     }
   }
@@ -129,15 +133,13 @@ Alternatively, you can use this simplified configuration if you have the `chift-
   "mcpServers": {
     "chift": {
       "command": "uvx",
-      "args": [
-        "chift-mcp-server",
-        "stdio"
-      ],
+      "args": ["chift-mcp-server"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
-        "CHIFT_URL_BASE": "https://api.chift.eu"
+        "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
       }
     }
   }
@@ -157,16 +159,15 @@ like this:
       "args": [
         "run",
         "--directory",
-        "/path/to/your/local/chift/mcp",
-        "python",
-        "-m",
-        "chift_mcp"
+        "/path/to/your/local/chift-mcp",
+        "chift-mcp-server"
       ],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
-        "CHIFT_URL_BASE": "http://chift.localhost:8000"
+        "CHIFT_URL_BASE": "http://chift.localhost:8000", // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
       }
     }
   }
@@ -199,7 +200,8 @@ env = {
     "CHIFT_CLIENT_SECRET": "your_client_secret",
     "CHIFT_CLIENT_ID": "your_client_id",
     "CHIFT_ACCOUNT_ID": "your_account_id",
-    "CHIFT_URL_BASE": "https://api.chift.eu"
+    "CHIFT_URL_BASE": "https://api.chift.eu",
+    "CHIFT_CONSUMER_ID": "your_consumer_id",
 }
 
 # Create a server that will be run as a subprocess
@@ -211,7 +213,7 @@ async def main():
     async with agent.run_mcp_servers():
         result = await agent.run(
             '''
-                    Please get details about consumer with ID "consumer123" 
+                    Please get details about consumer with ID "consumer123"
                     and list all of its available connections.
                     '''
         )
@@ -229,46 +231,48 @@ Lear more about Vercel AI SDK https://ai-sdk.dev/docs/introduction
 #### Using stdio Transport
 
 ```javascript
-import {experimental_createMCPClient as createMCPClient} from 'ai';
-import {Experimental_StdioMCPTransport as StdioMCPTransport} from 'ai/mcp-stdio';
-import {openai} from '@ai-sdk/openai';
-import {generateText} from 'ai';
+import { experimental_createMCPClient as createMCPClient } from "ai";
+import { Experimental_StdioMCPTransport as StdioMCPTransport } from "ai/mcp-stdio";
+import { openai } from "@ai-sdk/openai";
+import { generateText } from "ai";
 
 async function main() {
-    let mcpClient;
+  let mcpClient;
 
-    try {
-        // Initialize MCP client with stdio transport
-        mcpClient = await createMCPClient({
-            transport: new StdioMCPTransport({
-                command: 'uvx',
-                args: ['chift-mcp-server', 'stdio'],
-                // Pass Chift environment variables
-                env: {
-                    CHIFT_CLIENT_SECRET: 'your_client_secret',
-                    CHIFT_CLIENT_ID: 'your_client_id',
-                    CHIFT_ACCOUNT_ID: 'your_account_id',
-                    CHIFT_URL_BASE: 'https://api.chift.eu',
-                },
-            }),
-        });
+  try {
+    // Initialize MCP client with stdio transport
+    mcpClient = await createMCPClient({
+      transport: new StdioMCPTransport({
+        command: "uvx",
+        args: ["chift-mcp-server", "stdio"],
+        // Pass Chift environment variables
+        env: {
+          CHIFT_CLIENT_SECRET: "your_client_secret",
+          CHIFT_CLIENT_ID: "your_client_id",
+          CHIFT_ACCOUNT_ID: "your_account_id",
+          CHIFT_URL_BASE: "https://api.chift.eu", // Optional
+          CHIFT_CONSUMER_ID: "your_consumer_id", // Optional
+        },
+      }),
+    });
 
-        // Get tools from the MCP server
-        const tools = mcpClient.tools();
+    // Get tools from the MCP server
+    const tools = mcpClient.tools();
 
-        // Use the tools with a language model
-        const {text} = await generateText({
-            model: openai('gpt-4o'),
-            tools,
-            maxSteps: 5, // Allow multiple tool calls in sequence
-            prompt: 'Get all available consumers and then show me the connections for the first one.',
-        });
+    // Use the tools with a language model
+    const { text } = await generateText({
+      model: openai("gpt-4o"),
+      tools,
+      maxSteps: 5, // Allow multiple tool calls in sequence
+      prompt:
+        "Get all available consumers and then show me the connections for the first one.",
+    });
 
-        console.log(text);
-    } finally {
-        // Make sure to close the client
-        await mcpClient?.close();
-    }
+    console.log(text);
+  } finally {
+    // Make sure to close the client
+    await mcpClient?.close();
+  }
 }
 
 main();
@@ -281,8 +285,11 @@ The following environment variables are used by the Chift MCP Server:
 - `CHIFT_CLIENT_SECRET`: Your Chift client secret
 - `CHIFT_CLIENT_ID`: Your Chift client ID
 - `CHIFT_ACCOUNT_ID`: Your Chift account ID
+- `CHIFT_CONSUMER_ID`: Consumer ID to pass by default (optional)
 - `CHIFT_URL_BASE`: Chift API URL (default: https://api.chift.eu)
 - `CHIFT_FUNCTION_CONFIG`: JSON string to configure which operations are available for each domain (optional)
+
+When `CHIFT_CONSUMER_ID` is set, the server lists only the tools relevant to that consumer's connection types. If it's not set (local stdio usage), a small discovery set of tools is exposed to fetch the available consumers and related connectors.
 
 ## 🚀 Available Tools
 
@@ -340,8 +347,9 @@ enabled for all domains:
 ```python
 DEFAULT_CONFIG = {
     "accounting": ["get", "create", "update", "add"],
-    "commerce": ["get", "create", "update", "add"],
+    "ecommerce": ["get", "create", "update", "add"],
     "invoicing": ["get", "create", "update", "add"],
+    "banking": ["get", "create", "update", "add"],
     "payment": ["get", "create", "update", "add"],
     "pms": ["get", "create", "update", "add"],
     "pos": ["get", "create", "update", "add"],
@@ -355,10 +363,7 @@ You can customize this configuration by setting the `CHIFT_FUNCTION_CONFIG` envi
   "mcpServers": {
     "chift": {
       "command": "uvx",
-      "args": [
-        "chift-mcp-server",
-        "stdio"
-      ],
+      "args": ["chift-mcp-server", "stdio"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
@@ -373,3 +378,140 @@ You can customize this configuration by setting the `CHIFT_FUNCTION_CONFIG` envi
 
 This example would restrict the accounting domain to only get and create operations, commerce to only get operations,
 and invoicing to get, create, and update operations.
+
+## 🧪 Testing
+
+The Chift MCP Server includes a test suite organized using pytest and includes unit tests for core functionality.
+
+### Prerequisites
+
+Make sure you have the development dependencies installed:
+
+```bash
+uv sync --dev
+```
+
+This will install all the necessary testing dependencies including:
+
+- `pytest` - Testing framework
+- `pytest-asyncio` - Async testing support
+- `ruff` - Linting and formatting
+
+### Running Tests
+
+#### Basic Test Execution
+
+Run all tests using uv:
+
+```bash
+uv run pytest
+```
+
+#### Alternative Test Commands
+
+You can also use the poethepoet task runner:
+
+```bash
+uv run poe test
+```
+
+Or run pytest directly if you're in an activated environment:
+
+```bash
+pytest tests
+```
+
+#### Test Options and Flags
+
+Run tests with verbose output:
+
+```bash
+pytest -v
+```
+
+Run tests with coverage reporting:
+
+```bash
+pytest --cov=src/chift_mcp
+```
+
+Run specific test files:
+
+```bash
+pytest tests/unit/test_tools.py
+pytest tests/unit/test_middleware.py
+```
+
+Run specific test classes or methods:
+
+```bash
+pytest tests/unit/test_tools.py::TestCustomizeTools
+pytest tests/unit/test_tools.py::TestCustomizeTools::test_customize_tools_no_customization_needed
+```
+
+Run tests in parallel (if you have pytest-xdist installed):
+
+```bash
+pytest -n auto
+```
+
+#### Key Test Components
+
+- **`conftest.py`**: Contains shared pytest fixtures including:
+
+  - `mock_fastmcp`: Mock FastMCP instance for testing
+  - `mock_tool`: Mock Tool instances with various configurations
+  - `mock_middleware_context`: Mock context for middleware testing
+
+- **`test_tools.py`**: Tests for tool management including:
+
+  - Tool customization logic
+  - Consumer ID parameter handling
+  - Pagination parameter management
+  - Tool registration and removal
+
+- **`test_middleware.py`**: Tests for middleware functionality including:
+
+  - Request/response processing
+  - Error handling
+  - State management
+
+- **`test_tool_factory.py`**: Tests for tool factory utilities
+
+This configuration:
+
+- Automatically handles async test functions
+- Looks for tests in the `tests/` directory
+- Recognizes test files starting with `test_` or ending with `_test.py`
+- Recognizes test classes starting with `Test`
+- Recognizes test functions starting with `test_`
+
+### Continuous Integration
+
+Tests are designed to run in CI/CD environments. Make sure all tests pass before submitting pull requests:
+
+```bash
+# Run the full test suite
+pytest
+
+# Run linting
+poe lint
+
+# Run formatting checks
+poe format-check
+```
+
+### Debugging Tests
+
+For debugging failing tests:
+
+```bash
+# Run with detailed output and stop on first failure
+pytest -vvs --tb=long -x
+
+# Run with Python debugger on failures
+pytest --pdb
+
+# Run specific test with maximum verbosity
+pytest -vvs tests/unit/test_tools.py::TestCustomizeTools::test_specific_method
+```
