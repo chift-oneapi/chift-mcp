@@ -426,33 +426,33 @@ pytest tests
 Run tests with verbose output:
 
 ```bash
-uv run pytest -v
+pytest -v
 ```
 
 Run tests with coverage reporting:
 
 ```bash
-uv run pytest --cov=src/chift_mcp
+pytest --cov=src/chift_mcp
 ```
 
 Run specific test files:
 
 ```bash
-uv run pytest tests/unit/test_tools.py
-uv run pytest tests/unit/test_middleware.py
+pytest tests/unit/test_tools.py
+pytest tests/unit/test_middleware.py
 ```
 
 Run specific test classes or methods:
 
 ```bash
-uv run pytest tests/unit/test_tools.py::TestCustomizeTools
-uv run pytest tests/unit/test_tools.py::TestCustomizeTools::test_customize_tools_no_customization_needed
+pytest tests/unit/test_tools.py::TestCustomizeTools
+pytest tests/unit/test_tools.py::TestCustomizeTools::test_customize_tools_no_customization_needed
 ```
 
 Run tests in parallel (if you have pytest-xdist installed):
 
 ```bash
-uv run pytest -n auto
+pytest -n auto
 ```
 
 #### Key Test Components
@@ -492,13 +492,13 @@ Tests are designed to run in CI/CD environments. Make sure all tests pass before
 
 ```bash
 # Run the full test suite
-uv run pytest
+pytest
 
 # Run linting
-uv run poe lint
+poe lint
 
 # Run formatting checks
-uv run poe format-check
+poe format-check
 ```
 
 ### Debugging Tests
@@ -507,11 +507,11 @@ For debugging failing tests:
 
 ```bash
 # Run with detailed output and stop on first failure
-uv run pytest -vvs --tb=long -x
+pytest -vvs --tb=long -x
 
 # Run with Python debugger on failures
-uv run pytest --pdb
+pytest --pdb
 
 # Run specific test with maximum verbosity
-uv run pytest -vvs tests/unit/test_tools.py::TestCustomizeTools::test_specific_method
+pytest -vvs tests/unit/test_tools.py::TestCustomizeTools::test_specific_method
 ```
