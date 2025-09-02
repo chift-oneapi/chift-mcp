@@ -6,10 +6,5 @@
   },
   "environment": {
     "dependencies": ["chift"]
-  },
-  "deployment": {
-    "env": {
-      "FASTMCP_EXPERIMENTAL_ENABLE_NEW_OPENAPI_PARSER": "true"
-    }
   }
 }

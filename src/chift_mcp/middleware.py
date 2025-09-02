@@ -98,7 +98,7 @@ class FilterToolsMiddleware(Middleware):
                 continue
 
             parts = tool.name.split("_")
-            if len(parts) != 3:
+            if len(parts) < 3:
                 logger.warning(
                     f"Tool {tool.name} has invalid name, expected 3 parts got {len(parts)}"
                 )

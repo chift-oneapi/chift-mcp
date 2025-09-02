@@ -7,13 +7,16 @@ from chift_mcp.config import Chift
 class ClientAuth(Auth):
     def __init__(
         self,
-        chift_config: Chift,
+        client_id: str,
+        client_secret: str,
+        account_id: str,
+        url_base: str,
     ):
         self.chift_auth = ChiftAuth(
-            chift_config.client_id,
-            chift_config.client_secret,
-            chift_config.account_id,
-            chift_config.url_base,
+            client_id,
+            client_secret,
+            account_id,
+            url_base,
             None,
             None,
         )
@@ -26,5 +29,18 @@ class ClientAuth(Auth):
 def get_http_client(
     chift_config: Chift | None,
     url_base: str,
+    is_remote: bool,
 ) -> AsyncClient:
-    return AsyncClient(base_url=url_base, auth=ClientAuth(chift_config) if chift_config else None)
+    if not is_remote and not chift_config:
+        raise ValueError("Chift config is not set for local mode")
+    if is_remote and chift_config:
+        raise ValueError("Chift config is set for remote mode")
+
+    return AsyncClient(
+        base_url=url_base,
+        auth=ClientAuth(
+            chift_config.client_id, chift_config.client_secret, chift_config.account_id, url_base
+        )
+        if chift_config
+        else None,
+    )

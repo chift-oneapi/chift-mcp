@@ -139,7 +139,7 @@ Alternatively, you can use this simplified configuration if you have the `chift-
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
-        "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
       }
     }
   }
@@ -160,7 +160,7 @@ like this:
         "run",
         "--directory",
         "/path/to/your/local/chift-mcp",
-        "chift-mcp-server",
+        "chift-mcp-server"
       ],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
@@ -251,7 +251,7 @@ async function main() {
           CHIFT_CLIENT_ID: "your_client_id",
           CHIFT_ACCOUNT_ID: "your_account_id",
           CHIFT_URL_BASE: "https://api.chift.eu", // Optional
-          CHIFT_CONSUMER_ID: "your_consumer_id" // Optional
+          CHIFT_CONSUMER_ID: "your_consumer_id", // Optional
         },
       }),
     });
@@ -378,3 +378,140 @@ You can customize this configuration by setting the `CHIFT_FUNCTION_CONFIG` envi
 
 This example would restrict the accounting domain to only get and create operations, commerce to only get operations,
 and invoicing to get, create, and update operations.
+
+## 🧪 Testing
+
+The Chift MCP Server includes a test suite organized using pytest and includes unit tests for core functionality.
+
+### Prerequisites
+
+Make sure you have the development dependencies installed:
+
+```bash
+uv sync --dev
+```
+
+This will install all the necessary testing dependencies including:
+
+- `pytest` - Testing framework
+- `pytest-asyncio` - Async testing support
+- `ruff` - Linting and formatting
+
+### Running Tests
+
+#### Basic Test Execution
+
+Run all tests using uv:
+
+```bash
+uv run pytest
+```
+
+#### Alternative Test Commands
+
+You can also use the poethepoet task runner:
+
+```bash
+uv run poe test
+```
+
+Or run pytest directly if you're in an activated environment:
+
+```bash
+pytest tests
+```
+
+#### Test Options and Flags
+
+Run tests with verbose output:
+
+```bash
+uv run pytest -v
+```
+
+Run tests with coverage reporting:
+
+```bash
+uv run pytest --cov=src/chift_mcp
+```
+
+Run specific test files:
+
+```bash
+uv run pytest tests/unit/test_tools.py
+uv run pytest tests/unit/test_middleware.py
+```
+
+Run specific test classes or methods:
+
+```bash
+uv run pytest tests/unit/test_tools.py::TestCustomizeTools
+uv run pytest tests/unit/test_tools.py::TestCustomizeTools::test_customize_tools_no_customization_needed
+```
+
+Run tests in parallel (if you have pytest-xdist installed):
+
+```bash
+uv run pytest -n auto
+```
+
+#### Key Test Components
+
+- **`conftest.py`**: Contains shared pytest fixtures including:
+
+  - `mock_fastmcp`: Mock FastMCP instance for testing
+  - `mock_tool`: Mock Tool instances with various configurations
+  - `mock_middleware_context`: Mock context for middleware testing
+
+- **`test_tools.py`**: Tests for tool management including:
+
+  - Tool customization logic
+  - Consumer ID parameter handling
+  - Pagination parameter management
+  - Tool registration and removal
+
+- **`test_middleware.py`**: Tests for middleware functionality including:
+
+  - Request/response processing
+  - Error handling
+  - State management
+
+- **`test_tool_factory.py`**: Tests for tool factory utilities
+
+This configuration:
+
+- Automatically handles async test functions
+- Looks for tests in the `tests/` directory
+- Recognizes test files starting with `test_` or ending with `_test.py`
+- Recognizes test classes starting with `Test`
+- Recognizes test functions starting with `test_`
+
+### Continuous Integration
+
+Tests are designed to run in CI/CD environments. Make sure all tests pass before submitting pull requests:
+
+```bash
+# Run the full test suite
+uv run pytest
+
+# Run linting
+uv run poe lint
+
+# Run formatting checks
+uv run poe format-check
+```
+
+### Debugging Tests
+
+For debugging failing tests:
+
+```bash
+# Run with detailed output and stop on first failure
+uv run pytest -vvs --tb=long -x
+
+# Run with Python debugger on failures
+uv run pytest --pdb
+
+# Run specific test with maximum verbosity
+uv run pytest -vvs tests/unit/test_tools.py::TestCustomizeTools::test_specific_method
+```

@@ -38,6 +38,7 @@ async def create_mcp(
     client = get_http_client(
         chift_config,
         url_base,
+        is_remote,
     )
     consumer_id = None
     if chift_config:
