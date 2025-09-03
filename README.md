@@ -110,30 +110,8 @@ In Claude Desktop, you can access the config file at:
 {
   "mcpServers": {
     "chift": {
-      "command": "/path/to/uv",
-      "args": ["chift-mcp-server"],
-      "env": {
-        "CHIFT_CLIENT_SECRET": "your_client_secret",
-        "CHIFT_CLIENT_ID": "your_client_id",
-        "CHIFT_ACCOUNT_ID": "your_account_id",
-        "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
-        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
-      }
-    }
-  }
-}
-```
-
-Note: If you experience any path issues, try using absolute paths for both the `uv` command and the directory.
-
-Alternatively, you can use this simplified configuration if you have the `chift-mcp-server` package installed:
-
-```json
-{
-  "mcpServers": {
-    "chift": {
-      "command": "uvx",
-      "args": ["chift-mcp-server"],
+      "command": "/path/to/uvx",
+      "args": ["chift-mcp-server@latest"],
       "env": {
         "CHIFT_CLIENT_SECRET": "your_client_secret",
         "CHIFT_CLIENT_ID": "your_client_id",
@@ -205,7 +183,7 @@ env = {
 }
 
 # Create a server that will be run as a subprocess
-server = MCPServerStdio('uvx', ['chift-mcp-server', 'stdio'], env=env)
+server = MCPServerStdio('uvx', ['chift-mcp-server@latest'], env=env)
 agent = Agent('openai:gpt-4o', mcp_servers=[server])
 
 
@@ -244,7 +222,7 @@ async function main() {
     mcpClient = await createMCPClient({
       transport: new StdioMCPTransport({
         command: "uvx",
-        args: ["chift-mcp-server", "stdio"],
+        args: ["chift-mcp-server@latest"],
         // Pass Chift environment variables
         env: {
           CHIFT_CLIENT_SECRET: "your_client_secret",
@@ -333,7 +311,7 @@ uv pip install -e .
 chift-mcp-server
 
 # Or use uvx
-uvx chift-mcp-server
+uvx chift-mcp-server@latest
 ```
 
 Or with the configuration set in Claude Desktop, simply restart the application and look for the tool icon in the
