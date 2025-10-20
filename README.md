@@ -117,7 +117,8 @@ In Claude Desktop, you can access the config file at:
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
-        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
+        "CHIFT_MARKETPLACE_ID": "your_marketplace_id" // Optional
       }
     }
   }
@@ -145,7 +146,8 @@ like this:
         "CHIFT_CLIENT_ID": "your_client_id",
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "http://chift.localhost:8000", // Optional
-        "CHIFT_CONSUMER_ID": "your_consumer_id" // Optional
+        "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
+        "CHIFT_MARKETPLACE_ID": "your_marketplace_id" // Optional
       }
     }
   }
@@ -180,6 +182,7 @@ env = {
     "CHIFT_ACCOUNT_ID": "your_account_id",
     "CHIFT_URL_BASE": "https://api.chift.eu",
     "CHIFT_CONSUMER_ID": "your_consumer_id",
+    "CHIFT_MARKETPLACE_ID": "your_marketplace_id",  # Optional
 }
 
 # Create a server that will be run as a subprocess
@@ -230,6 +233,7 @@ async function main() {
           CHIFT_ACCOUNT_ID: "your_account_id",
           CHIFT_URL_BASE: "https://api.chift.eu", // Optional
           CHIFT_CONSUMER_ID: "your_consumer_id", // Optional
+          CHIFT_MARKETPLACE_ID: "your_marketplace_id", // Optional
         },
       }),
     });
@@ -264,10 +268,13 @@ The following environment variables are used by the Chift MCP Server:
 - `CHIFT_CLIENT_ID`: Your Chift client ID
 - `CHIFT_ACCOUNT_ID`: Your Chift account ID
 - `CHIFT_CONSUMER_ID`: Consumer ID to pass by default (optional)
+- `CHIFT_MARKETPLACE_ID`: Marketplace ID for authentication (optional)
 - `CHIFT_URL_BASE`: Chift API URL (default: https://api.chift.eu)
 - `CHIFT_FUNCTION_CONFIG`: JSON string to configure which operations are available for each domain (optional)
 
 When `CHIFT_CONSUMER_ID` is set, the server lists only the tools relevant to that consumer's connection types. If it's not set (local stdio usage), a small discovery set of tools is exposed to fetch the available consumers and related connectors.
+
+When `CHIFT_MARKETPLACE_ID` is set, it will be included in the authentication request to the Chift API, allowing marketplace-specific access and permissions.
 
 ## 🚀 Available Tools
 
