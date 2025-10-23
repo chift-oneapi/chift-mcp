@@ -20,3 +20,4 @@ class Chift(BaseSettings):
     server_name: str = "Chift MCP Server"
     proxy_url: str = "https://docs.chift.eu/mcp"
     marketplace_id: str | None = None
+    search: bool = False

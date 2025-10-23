@@ -18,7 +18,8 @@ async def configure_mcp():
             EnvAuthMiddleware(chift_config.consumer_id, chift_config.function_config),
         ],
     )
-    await mcp.import_server(get_proxy(chift_config.proxy_url))
+    if chift_config.search:
+        await mcp.import_server(get_proxy(chift_config.proxy_url))
     return mcp
 
 

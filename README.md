@@ -118,7 +118,8 @@ In Claude Desktop, you can access the config file at:
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "https://api.chift.eu", // Optional
         "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
-        "CHIFT_MARKETPLACE_ID": "your_marketplace_id" // Optional
+        "CHIFT_MARKETPLACE_ID": "your_marketplace_id", // Optional
+        "CHIFT_SEARCH": true // default to false
       }
     }
   }
@@ -147,7 +148,8 @@ like this:
         "CHIFT_ACCOUNT_ID": "your_account_id",
         "CHIFT_URL_BASE": "http://chift.localhost:8000", // Optional
         "CHIFT_CONSUMER_ID": "your_consumer_id", // Optional
-        "CHIFT_MARKETPLACE_ID": "your_marketplace_id" // Optional
+        "CHIFT_MARKETPLACE_ID": "your_marketplace_id", // Optional
+        "CHIFT_SEARCH": true // default to fasle
       }
     }
   }
@@ -183,6 +185,7 @@ env = {
     "CHIFT_URL_BASE": "https://api.chift.eu",
     "CHIFT_CONSUMER_ID": "your_consumer_id",
     "CHIFT_MARKETPLACE_ID": "your_marketplace_id",  # Optional
+    "CHIFT_SEARCH": True # default to fasle
 }
 
 # Create a server that will be run as a subprocess
@@ -234,6 +237,7 @@ async function main() {
           CHIFT_URL_BASE: "https://api.chift.eu", // Optional
           CHIFT_CONSUMER_ID: "your_consumer_id", // Optional
           CHIFT_MARKETPLACE_ID: "your_marketplace_id", // Optional
+          CHIFT_SEARCH: true // default to fasle
         },
       }),
     });
@@ -271,6 +275,7 @@ The following environment variables are used by the Chift MCP Server:
 - `CHIFT_MARKETPLACE_ID`: Marketplace ID for authentication (optional)
 - `CHIFT_URL_BASE`: Chift API URL (default: https://api.chift.eu)
 - `CHIFT_FUNCTION_CONFIG`: JSON string to configure which operations are available for each domain (optional)
+- `CHIFT_SEARCH`: Boolean value to include the searchChift tool in the list of tools. Defaults to false (not included)
 
 When `CHIFT_CONSUMER_ID` is set, the server lists only the tools relevant to that consumer's connection types. If it's not set (local stdio usage), a small discovery set of tools is exposed to fetch the available consumers and related connectors.
 
