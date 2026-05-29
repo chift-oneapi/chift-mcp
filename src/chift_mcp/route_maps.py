@@ -1,4 +1,4 @@
-from fastmcp.experimental.server.openapi import MCPType, RouteMap
+from fastmcp.server.providers.openapi import MCPType, RouteMap
 
 from chift_mcp.constants import CONNECTION_TYPES
 

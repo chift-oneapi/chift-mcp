@@ -53,7 +53,7 @@ class EnvAuthMiddleware(Middleware):
 
         # Filter domains to only include only if consumer_id is set
         if self.consumer_id:
-            context.fastmcp_context.set_state("consumer_id", self.consumer_id)
+            await context.fastmcp_context.set_state("consumer_id", self.consumer_id)
             connection_types = self.connection_types(self.consumer_id)
             function_config = {
                 domain: operations
@@ -61,7 +61,7 @@ class EnvAuthMiddleware(Middleware):
                 if domain in connection_types
             }
 
-        context.fastmcp_context.set_state("function_config", function_config)
+        await context.fastmcp_context.set_state("function_config", function_config)
 
         return await call_next(context)
 
@@ -84,7 +84,7 @@ class FilterToolsMiddleware(Middleware):
         if context.fastmcp_context is None:
             raise ValueError("FastMCP context is not set")
 
-        function_config = context.fastmcp_context.get_state("function_config")
+        function_config = await context.fastmcp_context.get_state("function_config")
         if function_config is None:
             return await call_next(context)
 

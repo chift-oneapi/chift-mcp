@@ -18,6 +18,8 @@ class TestUserAuthMiddleware:
 
         # Set up the middleware context with fastmcp_context
         mock_fastmcp_context = Mock()
+        mock_fastmcp_context.set_state = AsyncMock()
+        mock_fastmcp_context.get_state = AsyncMock()
         mock_middleware_context.fastmcp_context = mock_fastmcp_context
 
         # Mock call_next

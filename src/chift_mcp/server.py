@@ -1,6 +1,4 @@
 from fastmcp import FastMCP
-from fastmcp.experimental.server.openapi import FastMCPOpenAPI
-from fastmcp.server.auth import AuthProvider
 from fastmcp.server.middleware import Middleware
 from fastmcp.utilities.logging import get_logger
 from httpx import get
@@ -23,7 +21,6 @@ async def create_mcp(
     name: str = "Chift API Bridge",
     chift_config: Chift | None = None,
     is_remote: bool = False,
-    auth: AuthProvider | None = None,
     middleware: list[Middleware] | None = None,
 ) -> FastMCP:
     if not url_base:
@@ -46,7 +43,7 @@ async def create_mcp(
         consumer_id = chift_config.consumer_id
 
     openapi_spec = get(f"{url_base}/openapi.json").json()
-    mcp = FastMCPOpenAPI(
+    mcp = FastMCP.from_openapi(
         openapi_spec=openapi_spec,
         client=client,
         name=name,
@@ -55,12 +52,10 @@ async def create_mcp(
             *(middleware or []),
             FilterToolsMiddleware(consumer_id, is_remote),
         ],
-        auth=auth,
-        timeout=30,
     )
 
     add_prompts(mcp)
 
-    await customize_tools(mcp, consumer_id, is_remote)  # Customize tools to modify openapi spec
+    await customize_tools(mcp, consumer_id, is_remote)
 
     return mcp

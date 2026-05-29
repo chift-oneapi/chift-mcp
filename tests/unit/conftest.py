@@ -30,7 +30,7 @@ def dummy_mcp():
 def mock_fastmcp():
     """Create a mock FastMCP instance for testing."""
     mock_mcp = Mock(spec=FastMCP)
-    mock_mcp.get_tools = AsyncMock(return_value={})
+    mock_mcp.list_tools = AsyncMock(return_value=[])
     mock_mcp.add_tool = Mock()
     mock_mcp.remove_tool = Mock()
     mock_mcp.tool = Mock()
@@ -125,8 +125,8 @@ def mock_tool_with_consumer_id_and_pagination():
 def mock_fastmcp_context():
     """Create a mock FastMCP context for middleware testing."""
     mock_context = Mock()
-    mock_context.get_state = Mock()
-    mock_context.set_state = Mock()
+    mock_context.get_state = AsyncMock()
+    mock_context.set_state = AsyncMock()
     return mock_context
 
 
