@@ -17,7 +17,7 @@ class HideConsumerIdToolFactory(ToolFactory):
         self.consumer_id = None
 
     async def transform_fn(self, **kwargs):
-        self.consumer_id = get_context().get_state("consumer_id")
+        self.consumer_id = await get_context().get_state("consumer_id")
         return await forward(**kwargs)
 
     def _customize_tool(self, tool: Tool) -> Tool | None:
@@ -98,8 +98,9 @@ class PaginationToolFactory(ToolFactory):
 
 
 async def customize_tools(mcp: FastMCP, consumer_id: str | None = None, is_remote: bool = False):
-    tools = await mcp.get_tools()
-    for tool_name, tool in tools.items():
+    tools = await mcp.list_tools()
+    for tool in tools:
+        tool_name = tool.name
         if (consumer_id or is_remote) and "consumer_id" in tool.parameters.get("properties", {}):
             tool = HideConsumerIdToolFactory.execute(tool)
 

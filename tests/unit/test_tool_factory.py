@@ -26,7 +26,7 @@ class TestHideConsumerIdToolFactory:
         factory = HideConsumerIdToolFactory()
 
         mock_context = Mock()
-        mock_context.get_state.return_value = "test-consumer-123"
+        mock_context.get_state = AsyncMock(return_value="test-consumer-123")
 
         with (
             patch("src.chift_mcp.tools.get_context", return_value=mock_context),

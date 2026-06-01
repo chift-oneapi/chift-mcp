@@ -21,12 +21,13 @@ class TestCustomizeTools:
         """Test customize_tools when no customization is needed."""
         # Mock tools without consumer_id, page, or size parameters
         mock_tool1 = Mock(spec=Tool)
+        mock_tool1.name = "tool1"
         mock_tool1.parameters = {"properties": {"name": {"type": "string"}}}
         mock_tool2 = Mock(spec=Tool)
+        mock_tool2.name = "tool2"
         mock_tool2.parameters = {"properties": {"id": {"type": "integer"}}}
 
-        mock_tools = {"tool1": mock_tool1, "tool2": mock_tool2}
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool1, mock_tool2])
 
         await customize_tools(mock_fastmcp)
 
@@ -44,8 +45,8 @@ class TestCustomizeTools:
         self, mock_fastmcp, mock_tool_with_consumer_id
     ):
         """Test customize_tools hides consumer_id parameter when consumer_id is provided."""
-        mock_tools = {"test_tool": mock_tool_with_consumer_id}
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_tool_with_consumer_id.name = "test_tool"
+        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool_with_consumer_id])
 
         # Mock HideConsumerIdToolFactory
         mock_customized_tool = Mock(spec=Tool)
@@ -69,8 +70,8 @@ class TestCustomizeTools:
         self, mock_fastmcp, mock_tool_with_consumer_id
     ):
         """Test customize_tools hides consumer_id parameter when is_remote is True."""
-        mock_tools = {"test_tool": mock_tool_with_consumer_id}
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_tool_with_consumer_id.name = "test_tool"
+        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool_with_consumer_id])
 
         # Mock HideConsumerIdToolFactory
         mock_customized_tool = Mock(spec=Tool)
@@ -94,8 +95,8 @@ class TestCustomizeTools:
         self, mock_fastmcp, mock_tool_with_pagination
     ):
         """Test customize_tools adds pagination for tools with page and size parameters."""
-        mock_tools = {"paginated_tool": mock_tool_with_pagination}
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_tool_with_pagination.name = "paginated_tool"
+        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool_with_pagination])
 
         # Mock PaginationToolFactory
         mock_customized_tool = Mock(spec=Tool)
@@ -116,8 +117,10 @@ class TestCustomizeTools:
         self, mock_fastmcp, mock_tool_with_consumer_id_and_pagination
     ):
         """Test customize_tools applies both consumer_id hiding and pagination."""
-        mock_tools = {"complex_tool": mock_tool_with_consumer_id_and_pagination}
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_tool_with_consumer_id_and_pagination.name = "complex_tool"
+        mock_fastmcp.list_tools = AsyncMock(
+            return_value=[mock_tool_with_consumer_id_and_pagination]
+        )
 
         # Mock both factories
         mock_hide_customized_tool = Mock(spec=Tool)
@@ -150,9 +153,9 @@ class TestCustomizeTools:
             mock_fastmcp.add_tool.assert_called_once_with(mock_pagination_customized_tool)
 
     @pytest.mark.asyncio
-    async def test_customize_tools_handles_empty_tools_dict(self, mock_fastmcp):
-        """Test customize_tools handles empty tools dictionary."""
-        mock_fastmcp.get_tools = AsyncMock(return_value={})
+    async def test_customize_tools_handles_empty_tools_list(self, mock_fastmcp):
+        """Test customize_tools handles empty tools list."""
+        mock_fastmcp.list_tools = AsyncMock(return_value=[])
 
         await customize_tools(mock_fastmcp)
 
@@ -165,19 +168,16 @@ class TestCustomizeTools:
         """Test that customize_tools preserves the order of tool processing."""
         # Mock multiple tools
         mock_tool1 = Mock(spec=Tool)
+        mock_tool1.name = "tool1"
         mock_tool1.parameters = {"properties": {"name": {"type": "string"}}}
         mock_tool2 = Mock(spec=Tool)
+        mock_tool2.name = "tool2"
         mock_tool2.parameters = {"properties": {"id": {"type": "integer"}}}
         mock_tool3 = Mock(spec=Tool)
+        mock_tool3.name = "tool3"
         mock_tool3.parameters = {"properties": {"value": {"type": "number"}}}
 
-        # Use OrderedDict to ensure order
-        from collections import OrderedDict
-
-        mock_tools = OrderedDict(
-            [("tool1", mock_tool1), ("tool2", mock_tool2), ("tool3", mock_tool3)]
-        )
-        mock_fastmcp.get_tools = AsyncMock(return_value=mock_tools)
+        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool1, mock_tool2, mock_tool3])
 
         await customize_tools(mock_fastmcp)
 
