@@ -118,7 +118,9 @@ class TestCustomizeTools:
     ):
         """Test customize_tools applies both consumer_id hiding and pagination."""
         mock_tool_with_consumer_id_and_pagination.name = "complex_tool"
-        mock_fastmcp.list_tools = AsyncMock(return_value=[mock_tool_with_consumer_id_and_pagination])
+        mock_fastmcp.list_tools = AsyncMock(
+            return_value=[mock_tool_with_consumer_id_and_pagination]
+        )
 
         # Mock both factories
         mock_hide_customized_tool = Mock(spec=Tool)

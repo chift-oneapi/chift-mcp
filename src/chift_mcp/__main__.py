@@ -1,8 +1,9 @@
 import asyncio
 
+from fastmcp.server import create_proxy
+
 from chift_mcp.config import Chift
 from chift_mcp.middleware import EnvAuthMiddleware
-from fastmcp.server import create_proxy
 from chift_mcp.server import create_mcp
 
 
